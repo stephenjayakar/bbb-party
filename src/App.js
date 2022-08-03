@@ -1,8 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+import convexConfig from "../convex.json";
+
+const convex = new ConvexReactClient(convexConfig.origin);
 
 function App() {
   return (
+    <ConvexProvider client={convex}>
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -19,6 +24,7 @@ function App() {
         </a>
       </header>
     </div>
+    </ConvexProvider>
   );
 }
 
