@@ -5,3 +5,7 @@ lint:
 .PHONY: lint-fix
 lint-fix:
 	npx eslint pages/** --fix
+
+.PHONY: watch
+watch:
+	npm run dev
