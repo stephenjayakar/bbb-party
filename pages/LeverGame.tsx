@@ -22,7 +22,7 @@ const LeverGame = () => {
 
   return (
     <div>
-      {playerNumber === NO_PLAYER
+      {playerNumber === NO_PLAYER && gameState
         ? (
         <PickPlayerForm setPlayerNumber={switchToGame} />
           )
@@ -52,7 +52,7 @@ const PickPlayerForm = (props: any) => {
 }
 
 const GameComponent = (props: {
-  gameState: GameState | {},
+  gameState: GameState,
   playerNumber: number,
   restartGame: () => void,
 }) => {
@@ -66,11 +66,22 @@ const GameComponent = (props: {
       ? (
       <div>
         <p>{JSON.stringify(gameState)}</p>
+        {gameState.levers.map((lever) => (
+          <Lever />
+        ))}
         <p>{playerNumber}</p>
       </div>
         )
       : (<div />)}
     </>
+  )
+}
+
+const Lever = () => {
+  return (
+    <button>
+      <div className='lever' />
+    </button>
   )
 }
 
