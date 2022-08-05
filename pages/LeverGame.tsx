@@ -1,16 +1,15 @@
 import { useState } from 'react'
 
-import { startGame, GameState } from './game';
+import { startGame, GameState } from './game'
 
 // TODO: move constants -> game.ts
 const NO_PLAYER = -1
-const NUM_PLAYERS = 4;
+const NUM_PLAYERS = 4
 
 const LeverGame = () => {
   // TODO: Possibly merge this w/ an overloaded state object w/ personal information
   const [playerNumber, setPlayerNumber] = useState(NO_PLAYER)
-  const [gameState, setGameState] = useState({});
-
+  const [gameState, setGameState] = useState({})
 
   const switchToGame = (newPlayerNumber: number) => {
     setPlayerNumber(newPlayerNumber)
@@ -57,20 +56,22 @@ const GameComponent = (props: {
   playerNumber: number,
   restartGame: () => void,
 }) => {
-  const { gameState, playerNumber } = props;
+  const { gameState, playerNumber } = props
   return (
     <>
     <button
-      onClick={()=>props.restartGame()}
+      onClick={() => props.restartGame()}
     >restart game</button>
-    {gameState ? (
+    {gameState
+      ? (
       <div>
         <p>{JSON.stringify(gameState)}</p>
         <p>{playerNumber}</p>
       </div>
-    ) : (<div />)}
+        )
+      : (<div />)}
     </>
-  );
+  )
 }
 
 export default LeverGame
