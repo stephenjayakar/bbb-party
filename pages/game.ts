@@ -38,6 +38,13 @@ export const startGame = (numPlayers: number): GameState => {
   }
 }
 
+export const dummyGameState = (): GameState => {
+  return {
+    players: [],
+    levers: [],
+  }
+}
+
 // the progress state function is going to take in a lever to flip, and will return a new game state
 
 // also needs to occasionally return events
