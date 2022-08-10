@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import {
+  useState,
+  // useEffect,
+} from 'react'
 
-import { startGame, GameState } from './game'
+import { startGame } from './game'
 
 // TODO: move constants -> game.ts
 const NO_PLAYER = -1
@@ -9,30 +12,19 @@ const NUM_PLAYERS = 4
 const LeverGame = () => {
   // TODO: Possibly merge this w/ an overloaded state object w/ personal information
   const [playerNumber, setPlayerNumber] = useState(NO_PLAYER)
-  const [gameState, setGameState] = useState({})
+  const gameStarted = (): boolean => playerNumber !== NO_PLAYER
 
   const switchToGame = (newPlayerNumber: number) => {
     setPlayerNumber(newPlayerNumber)
-    setGameState(startGame(NUM_PLAYERS))
-  }
-
-  const restartGame = () => {
-    setGameState(startGame(NUM_PLAYERS))
   }
 
   return (
     <div>
-      {playerNumber === NO_PLAYER && gameState
-        ? (
+      {gameStarted() ? (
         <PickPlayerForm setPlayerNumber={switchToGame} />
-          )
-        : (
-          <GameComponent
-            gameState={gameState}
-            playerNumber={playerNumber}
-            restartGame={restartGame}
-          />
-          )}
+      ) : (
+        <GameComponent playerNumber={playerNumber} />
+      )}
     </div>
   )
 }
@@ -51,36 +43,44 @@ const PickPlayerForm = (props: any) => {
   )
 }
 
-const GameComponent = (props: {
-  gameState: GameState,
-  playerNumber: number,
-  restartGame: () => void,
-}) => {
-  const { gameState, playerNumber } = props
+// TODO: i think this should handle managing the game state.
+const GameComponent = (props: { playerNumber: number }) => {
+  const { playerNumber } = props
+  const [gameState, setGameState] = useState(startGame(NUM_PLAYERS))
+
+  const restartGame = () => {
+    setGameState(startGame(NUM_PLAYERS))
+  }
+
+  /* useEffect(() => {
+   *   setGameState(startGame(NUM_PLAYERS));
+   * }); */
+
+  const pressLever = (leverNumber: number) => {
+    console.log(leverNumber)
+  }
+
   return (
     <>
-    <button
-      onClick={() => props.restartGame()}
-    >restart game</button>
-    {gameState
-      ? (
+      <button onClick={() => restartGame()}>restart game</button>
       <div>
         <p>{JSON.stringify(gameState)}</p>
-        {gameState.levers.map((lever) => (
-          <Lever />
+        {gameState.levers.map((lever, index) => (
+          <Lever key={index} pressLever={pressLever} leverNumber={index} />
         ))}
         <p>{playerNumber}</p>
       </div>
-        )
-      : (<div />)}
     </>
   )
 }
 
-const Lever = () => {
+const Lever = (props: {
+  pressLever: (_: number) => void
+  leverNumber: number
+}) => {
   return (
-    <button>
-      <div className='lever' />
+    <button onClick={() => props.pressLever(props.leverNumber)}>
+      <div className="lever" />
     </button>
   )
 }
