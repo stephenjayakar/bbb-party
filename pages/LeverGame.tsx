@@ -1,14 +1,14 @@
 import {
   useState,
-//  useEffect,
+  //  useEffect,
 } from 'react'
 
 /* import {
-*   startGame,
-*   dummyGameState,
-*   GameState,
-*   Lever,
-* } from './game' */
+ *   startGame,
+ *   dummyGameState,
+ *   GameState,
+ *   Lever,
+ * } from './game' */
 import { useQuery, useMutation } from '../convex/_generated/react'
 
 // TODO: move constants -> game.ts
@@ -25,7 +25,8 @@ const LeverGame = () => {
 
   const gameStarted = gameState && gameState.isStarted
 
-  const numPlayers = gameState && gameState.players ? gameState.players.length : 0
+  const numPlayers =
+    gameState && gameState.players ? gameState.players.length : 0
 
   const [playerNumber, setPlayerNumber] = useState(NO_PLAYER)
 
@@ -40,32 +41,37 @@ const LeverGame = () => {
     startGame()
   }
 
-  const playerJoined = () => playerNumber !== NO_PLAYER && playerNumber < numPlayers
+  const playerJoined = () =>
+    playerNumber !== NO_PLAYER && playerNumber < numPlayers
 
   return (
     <>
-    <button onClick={() => restartGame()}>Restart game</button>
-    {playerJoined() && <p>You are player {playerNumber}</p>}
-    {gameStarted ? (
-      <GameComponent gameState={gameState} playerNumber={playerNumber}/>
-    ) : (
-      <>
-      <button onClick={() => joinGameButtonPressed()}>Join Game</button>
-      <button onClick={() => startGameButtonPressed()}>Start game</button>
-      </>)}
+      <button onClick={() => restartGame()}>Restart game</button>
+      {playerJoined() && <p>You are player {playerNumber}</p>}
+      {gameStarted ? (
+        <GameComponent gameState={gameState} playerNumber={playerNumber} />
+      ) : (
+        <>
+          <button onClick={() => joinGameButtonPressed()}>Join Game</button>
+          <button onClick={() => startGameButtonPressed()}>Start game</button>
+        </>
+      )}
     </>
   )
 }
 
 // TODO: i think this should handle managing the game state.
-const GameComponent = (props: {
-  playerNumber: number,
-  gameState: object,
-}) => {
-  const { playerNumber } = props
+const GameComponent = (props: { playerNumber: number; gameState: any }) => {
+  const { /*playerNumber,*/ gameState } = props
 
-  return <div>{playerNumber}</div>
-    /* const [gameState, setGameState] = useState<GameState>(dummyGameState())
+  return (
+    <>
+      {gameState.levers.map((lever, index) => (
+        <LeverComponent key={index} leverNumber={index} lever={lever} />
+      ))}
+    </>
+  )
+  /* const [gameState, setGameState] = useState<GameState>(dummyGameState())
 
 * const restartGame = () => {
 *     setGameState(startGame(NUM_PLAYERS))
@@ -95,14 +101,6 @@ const GameComponent = (props: {
 *             <button onClick={() => restartGame()}>restart game</button>
 *             <div>
 *                 <p>{JSON.stringify(gameState)}</p>
-*                 {gameState.levers.map((lever, index) => (
-*                     <LeverComponent
-*                         key={index}
-*                         pressLever={pressLever}
-*                         leverNumber={index}
-*                         lever={lever}
-*                     />
-*                 ))}
 *                 <p>You are player {playerNumber}</p>
 *             </div>
 *         </>
@@ -112,17 +110,17 @@ const GameComponent = (props: {
 * } */
 }
 
-/* const LeverComponent = (props: {
-*   pressLever: (_: number) => void
-*   lever: Lever
-*   leverNumber: number
-* }) => {
-*   return (
-*     <button onClick={() => props.pressLever(props.leverNumber)}>
-*       <div className="lever" />
-*       {props.lever.flipped && <p>Meow</p>}
-*     </button>
-*   )
-* } */
+const LeverComponent = (props: {
+  // pressLever: (_: number) => void
+  lever: any
+  leverNumber: number
+}) => {
+  return (
+    <button onClick={() => 0 /* props.pressLever(props.leverNumber) */}>
+      <div className="lever" />
+      {props.lever.flipped && <p>Meow</p>}
+    </button>
+  )
+}
 
 export default LeverGame
