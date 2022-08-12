@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import LeverGame from './LeverGame'
 import { useQuery, useMutation } from '../convex/_generated/react'
 import { useCallback } from 'react'
 
@@ -30,6 +31,7 @@ const Home: NextPage = () => {
         <button className={styles.button} onClick={incrementByOne}>
           Add One!
         </button>
+        <LeverGame />
       </main>
 
       <footer className={styles.footer}>
