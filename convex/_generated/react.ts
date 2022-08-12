@@ -13,6 +13,7 @@ import type getCounter from "../getCounter";
 import type getGameState from "../getGameState";
 import type incrementCounter from "../incrementCounter";
 import type joinGame from "../joinGame";
+import type pressLever from "../pressLever";
 import type restartGame from "../restartGame";
 import type startGame from "../startGame";
 
@@ -42,6 +43,7 @@ export type ConvexAPI = {
   mutations: {
     incrementCounter: ClientMutation<typeof incrementCounter>;
     joinGame: ClientMutation<typeof joinGame>;
+    pressLever: ClientMutation<typeof pressLever>;
     restartGame: ClientMutation<typeof restartGame>;
     startGame: ClientMutation<typeof startGame>;
   };

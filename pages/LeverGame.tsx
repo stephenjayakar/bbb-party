@@ -11,9 +11,7 @@ import {
  * } from './game' */
 import { useQuery, useMutation } from '../convex/_generated/react'
 
-// TODO: move constants -> game.ts
 const NO_PLAYER = -1
-// const NUM_PLAYERS = 4
 
 // This component should only hold "game started" as state
 const LeverGame = () => {
@@ -62,12 +60,28 @@ const LeverGame = () => {
 
 // TODO: i think this should handle managing the game state.
 const GameComponent = (props: { playerNumber: number; gameState: any }) => {
-  const { /*playerNumber,*/ gameState } = props
+  const { playerNumber, gameState } = props
+
+  const pressLever = useMutation('pressLever')
+
+  const pressLeverButtonPressed = (leverNumber: number) => {
+    if (isPlayerTurn()) {
+      pressLever(leverNumber)
+    }
+  }
+
+  const isPlayerTurn = () => playerNumber === gameState.playerTurn
 
   return (
     <>
+      {isPlayerTurn() && <p>It is your turn!</p>}
       {gameState.levers.map((lever, index) => (
-        <LeverComponent key={index} leverNumber={index} lever={lever} />
+        <LeverComponent
+          key={index}
+          leverNumber={index}
+          lever={lever}
+          pressLever={pressLeverButtonPressed}
+        />
       ))}
     </>
   )
@@ -83,17 +97,6 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 *     // This is necessary to only run this hook on the initial render, and not to
 *     // cause an infinite state set loop.
 * }, [])
-
-* const pressLever = (leverNumber: number) => {
-*     const newGameState = { ...gameState }
-*     const lever = gameState.levers[leverNumber]
-*     newGameState.levers[leverNumber].flipped = true
-*     setGameState(newGameState)
-*     if (lever.bomb) {
-*         alert('boom')
-*         setTimeout(() => setGameState(startGame(NUM_PLAYERS)), 1000)
-*     }
-* }
 
 * if (playerNumber !== NO_PLAYER) {
 *     return (
@@ -111,12 +114,12 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 }
 
 const LeverComponent = (props: {
-  // pressLever: (_: number) => void
+  pressLever: (_: number) => void
   lever: any
   leverNumber: number
 }) => {
   return (
-    <button onClick={() => 0 /* props.pressLever(props.leverNumber) */}>
+    <button onClick={() => props.pressLever(props.leverNumber)}>
       <div className="lever" />
       {props.lever.flipped && <p>Meow</p>}
     </button>

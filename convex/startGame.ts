@@ -16,6 +16,7 @@ export default mutation(async ({ db }) => {
         flipped: false
     }))
     gameState.levers = levers
+    gameState.playerTurn = 0;
     db.patch(gameState._id, gameState)
   }
 })
@@ -27,4 +28,3 @@ const gameReadyToBeStarted = (gameState): boolean =>
 function getRandomInt (max: number): number {
   return Math.floor(Math.random() * max)
 }
-
