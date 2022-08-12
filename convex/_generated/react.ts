@@ -14,6 +14,7 @@ import type getGameState from "../getGameState";
 import type incrementCounter from "../incrementCounter";
 import type joinGame from "../joinGame";
 import type restartGame from "../restartGame";
+import type startGame from "../startGame";
 
 // This jumpstarts TypeScript completion of the convex/values entry point.
 import type { Id } from "convex/values";
@@ -42,6 +43,7 @@ export type ConvexAPI = {
     incrementCounter: ClientMutation<typeof incrementCounter>;
     joinGame: ClientMutation<typeof joinGame>;
     restartGame: ClientMutation<typeof restartGame>;
+    startGame: ClientMutation<typeof startGame>;
   };
 };
 

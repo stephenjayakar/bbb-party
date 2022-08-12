@@ -7,6 +7,7 @@ export default mutation(async ({ db }) => {
     gameState = {
       players: [{ alive: true }],
       levers: [],
+      isStarted: false,
     }
     db.insert(GAME_TABLE, gameState)
   } else {
