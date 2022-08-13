@@ -35,4 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# convex authentication files
 convex.json
+
+# vscode files
+/.vscode
