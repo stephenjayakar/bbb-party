@@ -9,8 +9,15 @@
  * @module
  */
 
+import type addPlayerToRoom from "../addPlayerToRoom";
+import type flipLever from "../flipLever";
 import type getCounter from "../getCounter";
+import type getGameState from "../getGameState";
+import type getRoomPlayers from "../getRoomPlayers";
 import type incrementCounter from "../incrementCounter";
+import type joinGame from "../joinGame";
+import type restartGame from "../restartGame";
+import type startGame from "../startGame";
 
 // This jumpstarts TypeScript completion of the convex/values entry point.
 import type { Id } from "convex/values";
@@ -33,9 +40,16 @@ import type { ClientMutation, ClientQuery } from "convex/server";
 export type ConvexAPI = {
   queries: {
     getCounter: ClientQuery<typeof getCounter>;
+    getGameState: ClientQuery<typeof getGameState>;
+    getRoomPlayers: ClientQuery<typeof getRoomPlayers>;
   };
   mutations: {
+    addPlayerToRoom: ClientMutation<typeof addPlayerToRoom>;
+    flipLever: ClientMutation<typeof flipLever>;
     incrementCounter: ClientMutation<typeof incrementCounter>;
+    joinGame: ClientMutation<typeof joinGame>;
+    restartGame: ClientMutation<typeof restartGame>;
+    startGame: ClientMutation<typeof startGame>;
   };
 };
 
