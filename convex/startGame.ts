@@ -1,5 +1,8 @@
 import { mutation } from './_generated/server'
-import { GAME_TABLE } from './common'
+import {
+  GAME_TABLE,
+  createLevers,
+} from './common'
 
 export default mutation(async ({ db }) => {
   let gameState = await db.table(GAME_TABLE).first()
@@ -9,13 +12,7 @@ export default mutation(async ({ db }) => {
 
     // Seed the levers
     const numLevers = gameState.players.length + 1
-    const bombLeverIndex = getRandomInt(numLevers)
-    const levers = [...Array(numLevers)].map((_, i) => ({
-        // cracked
-        bomb: i === bombLeverIndex,
-        flipped: false
-    }))
-    gameState.levers = levers
+    gameState.levers = createLevers(numLevers)
     gameState.playerTurn = 0;
     db.patch(gameState._id, gameState)
   }
@@ -24,7 +21,3 @@ export default mutation(async ({ db }) => {
 const gameReadyToBeStarted = (gameState): boolean =>
   gameState && gameState.isStarted !== undefined && gameState.isStarted === false && gameState.players && gameState.players.length > 1
 
-// number is from [0, max) and an integer
-function getRandomInt (max: number): number {
-  return Math.floor(Math.random() * max)
-}
