@@ -18,6 +18,6 @@ export default mutation(async ({ db }) => {
   }
 })
 
-const gameReadyToBeStarted = (gameState): boolean =>
+const gameReadyToBeStarted = (gameState: any): boolean =>
   gameState && gameState.isStarted !== undefined && gameState.isStarted === false && gameState.players && gameState.players.length > 1
 

@@ -19,14 +19,14 @@ export default mutation(async ({ db }, leverNumber: number) => {
   }
 })
 
-const canFlipLever = (lever) => !lever.flipped
+const canFlipLever = (lever: any) => !lever.flipped
 
-const unflippedLevers = (levers): number =>
-  levers.filter((l) => !l.flipped).length
+const unflippedLevers = (levers: any): number =>
+  levers.filter((l: any) => !l.flipped).length
 
 // returns an index to the next alive player. also goes
 // in a circle through the array.
-const nextPlayer = (currentPlayer: number, players): number => {
+const nextPlayer = (currentPlayer: number, players: any): number => {
   for (let i = 1; i < players.length; ++i) {
     const possibleNextPlayer = (currentPlayer + i) % players.length
     if (players[possibleNextPlayer].alive) {
@@ -36,10 +36,10 @@ const nextPlayer = (currentPlayer: number, players): number => {
   throw new Error('something went wrong with selecting the next player')
 }
 
-const killCurrentPlayer = (gameState) => {
+const killCurrentPlayer = (gameState: any) => {
   const currentPlayer = gameState.playerTurn
   gameState.players[currentPlayer].alive = false
 }
 
-const numAlivePlayers = (players): number =>
-  players.filter((p) => p.alive).length
+const numAlivePlayers = (players: any): number =>
+  players.filter((p: any) => p.alive).length

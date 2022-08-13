@@ -73,7 +73,7 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
       ) : (
         <>
           {' '}
-          {gameState.levers.map((lever, index) => (
+          {gameState.levers.map((lever: any, index: number) => (
             <LeverComponent
               key={index}
               leverNumber={index}
