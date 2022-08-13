@@ -37,7 +37,7 @@ next-env.d.ts
 
 .log
 # convex authentication files
-convex.json
+# convex.json
 
 # vscode files
 /.vscode
