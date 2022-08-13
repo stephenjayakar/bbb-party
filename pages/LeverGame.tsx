@@ -11,12 +11,12 @@ const LeverGame = () => {
   const restartGame = useMutation('restartGame')
   const startGame = useMutation('startGame')
 
-  const gameStarted = gameState && gameState.isStarted
-
   const numPlayers =
     gameState && gameState.players ? gameState.players.length : 0
 
   const [playerNumber, setPlayerNumber] = useState(NO_PLAYER)
+
+  const gameInProgress = gameState && gameState.isStarted
 
   console.log(gameState)
 
@@ -36,7 +36,7 @@ const LeverGame = () => {
     <>
       <button onClick={() => restartGame()}>Restart game</button>
       {playerJoined() && <p>You are player {playerNumber}</p>}
-      {gameStarted ? (
+      {gameInProgress ? (
         <GameComponent gameState={gameState} playerNumber={playerNumber} />
       ) : (
         <>
@@ -59,6 +59,10 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
     }
   }
 
+  const gameEnded = gameState
+    ? gameState.isStarted && gameState.levers.length <= 2
+    : false
+
   const isPlayerTurn = () => playerNumber === gameState.playerTurn
 
   const playerIsAlive = (): boolean => gameState.players[playerNumber].alive
@@ -67,14 +71,21 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
     <>
       {isPlayerTurn() && <p>It is your turn!</p>}
       {!playerIsAlive() && <p>You are dead buddy</p>}
-      {gameState.levers.map((lever, index) => (
-        <LeverComponent
-          key={index}
-          leverNumber={index}
-          lever={lever}
-          flipLever={flipLeverButtonPressed}
-        />
-      ))}
+      {gameEnded ? (
+        <p>Game over</p>
+      ) : (
+        <>
+          {' '}
+          {gameState.levers.map((lever, index) => (
+            <LeverComponent
+              key={index}
+              leverNumber={index}
+              lever={lever}
+              flipLever={flipLeverButtonPressed}
+            />
+          ))}{' '}
+        </>
+      )}
     </>
   )
 }
@@ -88,6 +99,7 @@ const LeverComponent = (props: {
     <button onClick={() => props.flipLever(props.leverNumber)}>
       <div className="lever" />
       {props.lever.flipped && <p>Flipped!</p>}
+      {props.lever.bomb && <p>Bomb</p>}
     </button>
   )
 }

@@ -1,7 +1,6 @@
 import { mutation } from './_generated/server'
 import { GAME_TABLE, createLevers } from './common'
 
-// TODO: figure out what happens when there's only one player left.
 export default mutation(async ({ db }, leverNumber: number) => {
   let gameState = await db.table(GAME_TABLE).first()
   const lever = gameState.levers[leverNumber]
