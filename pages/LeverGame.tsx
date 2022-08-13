@@ -18,8 +18,6 @@ const LeverGame = () => {
 
   const gameInProgress = gameState && gameState.isStarted
 
-  console.log(gameState)
-
   const joinGameButtonPressed = async () => {
     await joinGame()
     setPlayerNumber(numPlayers)
@@ -29,13 +27,12 @@ const LeverGame = () => {
     startGame()
   }
 
-  const playerJoined = () =>
-    playerNumber !== NO_PLAYER && playerNumber < numPlayers
+  const playerJoined = playerNumber !== NO_PLAYER && playerNumber < numPlayers
 
   return (
     <>
       <button onClick={() => restartGame()}>Restart game</button>
-      {playerJoined() && <p>You are player {playerNumber}</p>}
+      {playerJoined && <p>You are player {playerNumber}</p>}
       {gameInProgress ? (
         <GameComponent gameState={gameState} playerNumber={playerNumber} />
       ) : (
