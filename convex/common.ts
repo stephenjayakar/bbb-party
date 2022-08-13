@@ -8,7 +8,6 @@ export const getRandomInt = (max: number): number =>
 export const createLevers = (numLevers: number) => {
   const bombLeverIndex = getRandomInt(numLevers)
   const levers = [...Array(numLevers)].map((_, i) => ({
-    // cracked
     bomb: i === bombLeverIndex,
     flipped: false,
   }))

@@ -96,7 +96,6 @@ const LeverComponent = (props: {
     <button onClick={() => props.flipLever(props.leverNumber)}>
       <div className="lever" />
       {props.lever.flipped && <p>Flipped!</p>}
-      {props.lever.bomb && <p>Bomb</p>}
     </button>
   )
 }
