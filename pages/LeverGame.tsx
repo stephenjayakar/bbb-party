@@ -54,7 +54,7 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
   const flipLever = useMutation('flipLever')
 
   const flipLeverButtonPressed = (leverNumber: number) => {
-    if (isPlayerTurn()) {
+    if (isPlayerTurn) {
       flipLever(leverNumber)
     }
   }
@@ -63,14 +63,14 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
     ? gameState.isStarted && gameState.levers.length <= 2
     : false
 
-  const isPlayerTurn = () => playerNumber === gameState.playerTurn
+  const isPlayerTurn = playerNumber === gameState.playerTurn
 
-  const playerIsAlive = (): boolean => gameState.players[playerNumber].alive
+  const playerIsAlive = gameState.players[playerNumber].alive
 
   return (
     <>
-      {isPlayerTurn() && <p>It is your turn!</p>}
-      {!playerIsAlive() && <p>You are dead buddy</p>}
+      {isPlayerTurn && <p>It is your turn!</p>}
+      {!playerIsAlive && <p>You are dead buddy</p>}
       {gameEnded ? (
         <p>Game over</p>
       ) : (
