@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import LeverGame from './LeverGame'
+import Room from './Room'
 import { useQuery, useMutation } from '../convex/_generated/react'
 import { useCallback } from 'react'
 
@@ -32,6 +33,7 @@ const Home: NextPage = () => {
           Add One!
         </button>
         <LeverGame />
+        <Room />
       </main>
 
       <footer className={styles.footer}>
