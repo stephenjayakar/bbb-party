@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import { useQuery, useMutation } from '../convex/_generated/react'
 
+import ButtonWeDidNotWrite from './ButtonWeDidNotWrite'
+
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
 
@@ -51,20 +53,27 @@ const LeverGame = () => {
   const playerJoined = playerNumber !== NO_PLAYER && playerNumber < numPlayers
 
   return (
-    <>
-      <button onClick={() => restartGame()}>Restart game</button>
+    <div className="leverGame">
+      <h1>lever game</h1>
+      <ButtonWeDidNotWrite onClick={() => restartGame()}>
+        Restart game
+      </ButtonWeDidNotWrite>
       {playerJoined && <p>You are player {playerNumber}</p>}
       {gameInProgress ? (
         <GameComponent gameState={gameState} playerNumber={playerNumber} />
       ) : (
         <>
           {!playerJoined && (
-            <button onClick={() => joinGameButtonPressed()}>Join Game</button>
+            <ButtonWeDidNotWrite onClick={() => joinGameButtonPressed()}>
+              Join Game
+            </ButtonWeDidNotWrite>
           )}
-          <button onClick={() => startGameButtonPressed()}>Start game</button>
+          <ButtonWeDidNotWrite onClick={() => startGameButtonPressed()}>
+            Start game
+          </ButtonWeDidNotWrite>
         </>
       )}
-    </>
+    </div>
   )
 }
 
@@ -116,10 +125,10 @@ const LeverComponent = (props: {
   leverNumber: number
 }) => {
   return (
-    <button onClick={() => props.flipLever(props.leverNumber)}>
+    <ButtonWeDidNotWrite onClick={() => props.flipLever(props.leverNumber)}>
       <div className="lever" />
       {props.lever.flipped && <p>Flipped!</p>}
-    </button>
+    </ButtonWeDidNotWrite>
   )
 }
 

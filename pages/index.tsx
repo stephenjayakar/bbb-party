@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import ButtonWeDidNotWrite from './ButtonWeDidNotWrite'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -13,6 +14,7 @@ const Home: NextPage = () => {
   const incrementByOne = useCallback(() => increment('clicks', 1), [increment])
 
   return (
+    <div className='page'>
     <div className={styles.container}>
       <Head>
         <title>Next.js with Convex</title>
@@ -20,21 +22,24 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+    <main className={styles.main}>
+    <span className='counter'>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js</a> with{' '}
+          welcome to bbb party🥳 with{' '}
           <a href="https://convex.dev">Convex</a>
         </h1>
 
         <p className={styles.description}>
-          {"Here's the counter:"} {counter}
-        </p>
-        <button className={styles.button} onClick={incrementByOne}>
+          {"here's a fun counter, smash that button:"} {counter}
+                  <ButtonWeDidNotWrite onClick={incrementByOne}>
           Add One!
-        </button>
+        </ButtonWeDidNotWrite>
+
+        </p>
+    </span>
         <LeverGame />
-        <Room />
-      </main>
+    <Room />
+    </main>
 
       <footer className={styles.footer}>
         <a
@@ -48,6 +53,7 @@ const Home: NextPage = () => {
           </span>
         </a>
       </footer>
+    </div>
     </div>
   )
 }
