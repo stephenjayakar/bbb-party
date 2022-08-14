@@ -3,6 +3,17 @@ import { useState } from 'react'
 import { useQuery, useMutation } from '../convex/_generated/react'
 
 const NO_PLAYER = -1
+const NO_GAME_ID = ''
+
+interface LocalGameState {
+  playerNumber: number
+  gameID: string
+}
+
+const dummyLocalState: LocalGameState = {
+  playerNumber: NO_PLAYER,
+  gameID: NO_GAME_ID,
+}
 
 const LeverGame = () => {
   const gameState = useQuery('getGameState') ?? {}
@@ -14,13 +25,23 @@ const LeverGame = () => {
   const numPlayers =
     gameState && gameState.players ? gameState.players.length : 0
 
-  const [playerNumber, setPlayerNumber] = useState(NO_PLAYER)
+  const [localGameState, setLocalGameState] = useState(dummyLocalState)
+  const { playerNumber, gameID } = localGameState
+  // The game in progress isn't the one that's stored locally, which means we have
+  // to invalidate the localstate.
+  if (
+    gameID !== NO_GAME_ID &&
+    gameState._id &&
+    gameState._id.toString() !== gameID
+  ) {
+    setLocalGameState(dummyLocalState)
+  }
 
   const gameInProgress = gameState && gameState.isStarted
 
   const joinGameButtonPressed = async () => {
-    await joinGame(numPlayers)
-    setPlayerNumber(numPlayers)
+    const localGameState = await joinGame()
+    setLocalGameState(localGameState)
   }
 
   const startGameButtonPressed = () => {

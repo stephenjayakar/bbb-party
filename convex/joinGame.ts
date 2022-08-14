@@ -1,23 +1,29 @@
 import { mutation } from './_generated/server'
 import { GAME_TABLE } from './common'
+import { Id } from 'convex/values'
 
-const INVALID_PLAYER_ERROR = Error('invalid player number joined');
-
-export default mutation(async ({ db }, playerNumber: number) => {
+export default mutation(async ({ db }): Promise<{
+  // TODO: bring in the named type
+  playerNumber: number,
+  gameID: string,
+}> => {
   let gameState = await db.table(GAME_TABLE).first()
+  let gameID: Id
   const numPlayers = gameState ? gameState.players.length : 0
-  if (playerNumber != numPlayers) {
-    throw INVALID_PLAYER_ERROR
-  }
   if (gameState === null) {
     gameState = {
       players: [{ alive: true }],
       levers: [],
       isStarted: false,
     }
-    db.insert(GAME_TABLE, gameState)
+    gameID = db.insert(GAME_TABLE, gameState)
   } else {
     gameState.players.push({alive: true})
     db.replace(gameState._id, gameState)
+    gameID = gameState._id
+  }
+  return {
+    playerNumber: numPlayers,
+    gameID: gameID.toString()
   }
 })
