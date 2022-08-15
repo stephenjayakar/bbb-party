@@ -119,7 +119,6 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
             <LeverComponent
               key={index}
               leverNumber={index}
-              lever={lever}
               flipLever={flipLeverButtonPressed}
             />
           ))}{' '}
@@ -135,10 +134,12 @@ const LeverComponent = (props: {
   leverNumber: number
 }) => {
   return (
-    <ButtonWeDidNotWrite onClick={() => props.flipLever(props.leverNumber)}>
-      <div className="lever" />
-      {props.lever.flipped && <p>Flipped!</p>}
-    </ButtonWeDidNotWrite>
+    <button
+      className="lever"
+      onClick={() => props.flipLever(props.leverNumber)}
+    >
+      {props.lever.flipped ? '🟩' : '🟥'}
+    </button>
   )
 }
 
