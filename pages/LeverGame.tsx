@@ -46,8 +46,11 @@ const LeverGame = () => {
     setLocalGameState(localGameState)
   }
 
+  const canStartGame = numPlayers >= 2
   const startGameButtonPressed = () => {
-    startGame()
+    if (canStartGame) {
+      startGame()
+    }
   }
 
   const playerJoined = playerNumber !== NO_PLAYER && playerNumber < numPlayers
@@ -55,7 +58,10 @@ const LeverGame = () => {
   return (
     <div className="leverGame">
       <h1>lever game</h1>
-      <ButtonWeDidNotWrite onClick={() => restartGame()}>
+      <ButtonWeDidNotWrite
+        disabled={numPlayers === 0}
+        onClick={() => restartGame()}
+      >
         Restart game
       </ButtonWeDidNotWrite>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
@@ -69,7 +75,10 @@ const LeverGame = () => {
               Join Game
             </ButtonWeDidNotWrite>
           )}
-          <ButtonWeDidNotWrite onClick={() => startGameButtonPressed()}>
+          <ButtonWeDidNotWrite
+            disabled={!canStartGame}
+            onClick={() => startGameButtonPressed()}
+          >
             Start game
           </ButtonWeDidNotWrite>
         </>
@@ -105,15 +114,14 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
         <p>Game over</p>
       ) : (
         <>
-          {' '}
           {gameState.levers.map((lever: any, index: number) => (
             <LeverComponent
+              lever={lever}
               key={index}
               leverNumber={index}
-              lever={lever}
               flipLever={flipLeverButtonPressed}
             />
-          ))}{' '}
+          ))}
         </>
       )}
     </>
@@ -126,10 +134,12 @@ const LeverComponent = (props: {
   leverNumber: number
 }) => {
   return (
-    <ButtonWeDidNotWrite onClick={() => props.flipLever(props.leverNumber)}>
-      <div className="lever" />
-      {props.lever.flipped && <p>Flipped!</p>}
-    </ButtonWeDidNotWrite>
+    <button
+      className="lever"
+      onClick={() => props.flipLever(props.leverNumber)}
+    >
+      {props.lever.flipped ? '🟩' : '🟥'}
+    </button>
   )
 }
 
