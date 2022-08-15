@@ -58,6 +58,7 @@ const LeverGame = () => {
       <ButtonWeDidNotWrite onClick={() => restartGame()}>
         Restart game
       </ButtonWeDidNotWrite>
+      {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
       {playerJoined && <p>You are player {playerNumber}</p>}
       {gameInProgress ? (
         <GameComponent gameState={gameState} playerNumber={playerNumber} />
