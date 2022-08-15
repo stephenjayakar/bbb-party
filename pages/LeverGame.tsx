@@ -46,8 +46,11 @@ const LeverGame = () => {
     setLocalGameState(localGameState)
   }
 
+  const canStartGame = numPlayers >= 2
   const startGameButtonPressed = () => {
-    startGame()
+    if (canStartGame) {
+      startGame()
+    }
   }
 
   const playerJoined = playerNumber !== NO_PLAYER && playerNumber < numPlayers
@@ -55,7 +58,10 @@ const LeverGame = () => {
   return (
     <div className="leverGame">
       <h1>lever game</h1>
-      <ButtonWeDidNotWrite onClick={() => restartGame()}>
+      <ButtonWeDidNotWrite
+        disabled={numPlayers === 0}
+        onClick={() => restartGame()}
+      >
         Restart game
       </ButtonWeDidNotWrite>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
@@ -69,7 +75,10 @@ const LeverGame = () => {
               Join Game
             </ButtonWeDidNotWrite>
           )}
-          <ButtonWeDidNotWrite onClick={() => startGameButtonPressed()}>
+          <ButtonWeDidNotWrite
+            disabled={!canStartGame}
+            onClick={() => startGameButtonPressed()}
+          >
             Start game
           </ButtonWeDidNotWrite>
         </>
