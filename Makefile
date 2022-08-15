@@ -12,3 +12,7 @@ lint-fix:
 .PHONY: watch
 watch:
 	npm run dev
+
+.PHONY: build
+build:
+	npm run build

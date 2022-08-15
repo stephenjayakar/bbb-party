@@ -114,14 +114,14 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
         <p>Game over</p>
       ) : (
         <>
-          {' '}
           {gameState.levers.map((lever: any, index: number) => (
             <LeverComponent
+              lever={lever}
               key={index}
               leverNumber={index}
               flipLever={flipLeverButtonPressed}
             />
-          ))}{' '}
+          ))}
         </>
       )}
     </>
