@@ -16,9 +16,27 @@
 }
 
 .counter {
-    background-color: #e1defa
+    background-color: #e1defa;
 }
 
 .leverGame {
-    /* TODO */
+    background-color: #e1defa;
+    padding: 24px;
+}
+
+.yourTurn {
+    font-size: 20;
+    background-color: #e4ffb8;
+}
+
+.dead {
+    background-color: #fa98b4;
+    font-family: 'Lucida Console', 'Courier New', monospace;
+    font-size: 36px;
+}
+
+.survived {
+    background-color: #c2ffd4;
+    font-family: 'Brush Script MT';
+    font-size: 36px;
 }
