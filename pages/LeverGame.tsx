@@ -109,12 +109,16 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 
   return (
     <>
-      {isPlayerTurn && <p className='yourTurn'>It is your turn!</p>}
-      {!playerIsAlive && <p className='dead'>💀 You are dead buddy 💀</p>}
+      {isPlayerTurn && <p className="yourTurn">it is your turn!</p>}
+      {!playerIsAlive && <p className="dead">💀 you are dead buddy 💀</p>}
       {gameEnded ? (
-        <p>Game over</p>
+        <>
+          {playerIsAlive && <p className="survived">😇 you survived!</p>}
+          <p>Game over</p>
+        </>
       ) : (
         <>
+          <p>One of these levers is a 💣</p>
           {gameState.levers.map((lever: any, index: number) => (
             <LeverComponent
               lever={lever}

@@ -31,6 +31,12 @@
 
 .dead {
     background-color: #fa98b4;
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-family: 'Lucida Console', 'Courier New', monospace;
+    font-size: 36px;
+}
+
+.survived {
+    background-color: #c2ffd4;
+    font-family: 'Brush Script MT';
     font-size: 36px;
 }
