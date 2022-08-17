@@ -2,7 +2,10 @@ import { useState } from 'react'
 
 import { useQuery, useMutation } from '../convex/_generated/react'
 
-import ButtonWeDidNotWrite from './ButtonWeDidNotWrite'
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import Card from 'react-bootstrap/Card'
 
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
@@ -103,30 +106,33 @@ const LeverGame = () => {
       <BombComponent displayBomb={displayBomb} />
       <h1>lever game: press the buttons!</h1>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
-      <ButtonWeDidNotWrite
-        disabled={numPlayers === 0}
-        onClick={() => restartGame()}
-      >
-        Restart game
-      </ButtonWeDidNotWrite>
-      <ButtonWeDidNotWrite
-        disabled={playerJoined || gameInProgress}
-        onClick={() => joinGameButtonPressed()}
-      >
-        Join Game
-      </ButtonWeDidNotWrite>
-      <ButtonWeDidNotWrite
-        disabled={!canStartGame}
-        onClick={() => startGameButtonPressed()}
-      >
-        Start game
-      </ButtonWeDidNotWrite>
-      <div className="leverGame">
-        {playerJoined && <p>You are player {playerNumber}</p>}
-        {gameInProgress && localGameState.playerNumber !== NO_PLAYER && (
-          <GameComponent gameState={gameState} playerNumber={playerNumber} />
-        )}
-      </div>
+      <ButtonGroup>
+        <Button disabled={numPlayers === 0} onClick={() => restartGame()}>
+          Restart game
+        </Button>
+        <Button
+          disabled={playerJoined || gameInProgress}
+          onClick={() => joinGameButtonPressed()}
+        >
+          Join Game
+        </Button>
+        <Button
+          disabled={!canStartGame}
+          onClick={() => startGameButtonPressed()}
+        >
+          Start game
+        </Button>
+      </ButtonGroup>
+      <Card bg='light'>
+        <Card.Body>
+          <Card.Title>
+            {playerJoined && <p>You are player {playerNumber}</p>}
+          </Card.Title>
+          {gameInProgress && localGameState.playerNumber !== NO_PLAYER && (
+            <GameComponent gameState={gameState} playerNumber={playerNumber} />
+          )}
+        </Card.Body>
+      </Card>
     </div>
   )
 }
@@ -152,24 +158,28 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 
   return (
     <>
-      {isPlayerTurn && <p className="yourTurn">it is your turn!</p>}
-      {!playerIsAlive && <p className="dead">💀 you are dead buddy 💀</p>}
+      {isPlayerTurn && <Alert variant='success'>it is your turn!</Alert>}
+      {!playerIsAlive && (
+        <Alert variant='danger'>💀 you are dead buddy 💀</Alert>
+      )}
       {gameEnded ? (
         <>
-          {playerIsAlive && <p className="survived">😇 you survived!</p>}
+          {playerIsAlive && <p className='survived'>😇 you survived!</p>}
           <p>Game over</p>
         </>
       ) : (
         <>
-          <p>One of these levers is a 💣</p>
-          {gameState.levers.map((lever: any, index: number) => (
-            <LeverComponent
-              lever={lever}
-              key={index}
-              leverNumber={index}
-              flipLever={flipLeverButtonPressed}
-            />
-          ))}
+          <Card.Subtitle>One of these levers is a 💣</Card.Subtitle>
+          <span>
+            {gameState.levers.map((lever: any, index: number) => (
+              <LeverComponent
+                lever={lever}
+                key={index}
+                leverNumber={index}
+                flipLever={flipLeverButtonPressed}
+              />
+            ))}
+          </span>
         </>
       )}
     </>
@@ -183,7 +193,7 @@ const LeverComponent = (props: {
 }) => {
   return (
     <button
-      className="lever"
+      className='lever'
       onClick={() => props.flipLever(props.leverNumber)}
     >
       {props.lever.flipped ? '🟩' : '🟥'}
@@ -192,7 +202,7 @@ const LeverComponent = (props: {
 }
 
 const BombComponent = (props: { displayBomb: boolean }) => {
-  return <>{props.displayBomb && <div className="bomb">💣💥</div>}</>
+  return <>{props.displayBomb && <div className='bomb'>💣💥</div>}</>
 }
 
 export default LeverGame
