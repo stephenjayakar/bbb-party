@@ -43,7 +43,7 @@
 
 .bomb {
     background: red;
-    position: absolute;
+    position: fixed;
     top: 0px;
     right: 0px;
     bottom: 0px;
@@ -52,4 +52,5 @@
     align-items: center;
     display: flex;
     justify-content: center;
+    overflow: auto;
 }
