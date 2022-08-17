@@ -6,15 +6,27 @@ import ButtonWeDidNotWrite from './ButtonWeDidNotWrite'
 
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
+const BOMB_ANIMATION_TIME = 1500 // ms
 
 interface LocalGameState {
   playerNumber: number
   gameID: string
+  // used to queue a bomb animation
+  numAlivePlayers: number
 }
 
 const dummyLocalState: LocalGameState = {
   playerNumber: NO_PLAYER,
   gameID: NO_GAME_ID,
+  numAlivePlayers: 0,
+}
+
+const getNumAlivePlayers = (players: any): number => {
+  if (players) {
+    // TODO: abstract this to a common dir so we can re-use. do it after types.
+    return players.filter((p: any) => p.alive).length
+  }
+  return 0
 }
 
 const LeverGame = () => {
@@ -28,6 +40,9 @@ const LeverGame = () => {
     gameState && gameState.players ? gameState.players.length : 0
 
   const [localGameState, setLocalGameState] = useState(dummyLocalState)
+
+  const [displayBomb, setDisplayBomb] = useState(false)
+
   const { playerNumber, gameID } = localGameState
   // We have local game state, but the game in progress
   // isn't the one that's stored locally, which means we have
@@ -40,11 +55,38 @@ const LeverGame = () => {
     setLocalGameState(dummyLocalState)
   }
 
+  // If we detect a player dies. We do this by
+  // observing a change in the # of dead players.
+  // This also lets us update the variable constantly.
+  const numAlivePlayers = getNumAlivePlayers(gameState.players)
+  if (
+    gameState &&
+    gameState.players &&
+    localGameState.numAlivePlayers !== numAlivePlayers
+  ) {
+    // Case where we show the bomb
+    if (numAlivePlayers < localGameState.numAlivePlayers) {
+      setDisplayBomb(true)
+      setTimeout(() => {
+        setDisplayBomb(false)
+      }, BOMB_ANIMATION_TIME)
+    }
+    setLocalGameState({
+      ...localGameState,
+      numAlivePlayers,
+    })
+  }
+
   const gameInProgress = gameState && gameState.isStarted
 
   const joinGameButtonPressed = async () => {
-    const localGameState = await joinGame()
-    setLocalGameState(localGameState)
+    const joinGameResponse = await joinGame()
+
+    setLocalGameState({
+      ...localGameState,
+      playerNumber: joinGameResponse.playerNumber,
+      gameID: joinGameResponse.gameState._id.toString(),
+    })
   }
 
   const canStartGame = numPlayers >= 2 && !gameInProgress
@@ -58,6 +100,7 @@ const LeverGame = () => {
 
   return (
     <div>
+      <BombComponent displayBomb={displayBomb} />
       <h1>lever game: press the buttons!</h1>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
       <ButtonWeDidNotWrite
@@ -146,6 +189,10 @@ const LeverComponent = (props: {
       {props.lever.flipped ? '🟩' : '🟥'}
     </button>
   )
+}
+
+const BombComponent = (props: { displayBomb: boolean }) => {
+  return <>{props.displayBomb && <div className="bomb">💣💥</div>}</>
 }
 
 export default LeverGame
