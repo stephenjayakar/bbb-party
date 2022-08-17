@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import convexConfig from '../convex.json'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
 const convex = new ConvexReactClient(convexConfig.origin)
 

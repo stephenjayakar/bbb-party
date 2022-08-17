@@ -53,4 +53,6 @@
   display: flex;
   justify-content: center;
   overflow: auto;
+  z-index: 1;
 }
+
