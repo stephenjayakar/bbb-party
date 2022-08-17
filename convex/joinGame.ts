@@ -5,7 +5,7 @@ import { Id } from 'convex/values'
 export default mutation(async ({ db }): Promise<{
   // TODO: bring in the named type
   playerNumber: number,
-  gameID: string,
+  gameState: any,
 }> => {
   let gameState = await db.table(GAME_TABLE).first()
   let gameID: Id
@@ -22,8 +22,9 @@ export default mutation(async ({ db }): Promise<{
     db.replace(gameState._id, gameState)
     gameID = gameState._id
   }
+  gameState._id = gameID
   return {
     playerNumber: numPlayers,
-    gameID: gameID.toString()
+    gameState,
   }
 })
