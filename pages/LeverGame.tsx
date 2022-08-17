@@ -83,13 +83,18 @@ const LeverGame = () => {
   const gameInProgress = gameState && gameState.isStarted
 
   const joinGameButtonPressed = async () => {
-    const joinGameResponse = await joinGame()
+    try {
+      const joinGameResponse = await joinGame(numPlayers)
 
-    setLocalGameState({
-      ...localGameState,
-      playerNumber: joinGameResponse.playerNumber,
-      gameID: joinGameResponse.gameState._id.toString(),
-    })
+      setLocalGameState({
+        ...localGameState,
+        playerNumber: joinGameResponse.playerNumber,
+        gameID: joinGameResponse.gameState._id.toString(),
+      })
+    } catch (error) {
+      // Probably only happens if someone presses the button too fast
+      console.log(error)
+    }
   }
 
   const canStartGame = numPlayers >= 2 && !gameInProgress

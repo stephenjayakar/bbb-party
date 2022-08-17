@@ -2,7 +2,7 @@ import { mutation } from './_generated/server'
 import { GAME_TABLE } from './common'
 import { Id } from 'convex/values'
 
-export default mutation(async ({ db }): Promise<{
+export default mutation(async ({ db }, numClientPlayers: number): Promise<{
   // TODO: bring in the named type
   playerNumber: number,
   gameState: any,
@@ -10,6 +10,9 @@ export default mutation(async ({ db }): Promise<{
   let gameState = await db.table(GAME_TABLE).first()
   let gameID: Id
   const numPlayers = gameState ? gameState.players.length : 0
+  if (numClientPlayers !== numPlayers) {
+    throw new Error('Local game state does not match current state')
+  }
   if (gameState === null) {
     gameState = {
       players: [{ alive: true }],
