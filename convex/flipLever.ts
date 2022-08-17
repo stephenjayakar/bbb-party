@@ -1,8 +1,8 @@
 import { mutation } from './_generated/server'
-import { GAME_TABLE, createLevers } from './common'
+import { GAME_TABLE, createLevers, GameStateWithID, Lever, Player } from './common'
 
 export default mutation(async ({ db }, leverNumber: number) => {
-  let gameState = await db.table(GAME_TABLE).first()
+  let gameState: GameStateWithID = await db.table(GAME_TABLE).first()
   const lever = gameState.levers[leverNumber]
   if (canFlipLever(lever)) {
     lever.flipped = true
@@ -10,7 +10,7 @@ export default mutation(async ({ db }, leverNumber: number) => {
       killCurrentPlayer(gameState)
     }
     const numPlayers = numAlivePlayers(gameState.players)
-    gameState.playerTurn = nextPlayer(gameState.playerTurn, gameState.players)
+    gameState.playerTurn = nextPlayer(gameState.playerTurn!, gameState.players)
     // Need to restart the game if there's only one lever left. Also need to restart it if the bomb is triggered
     if (unflippedLevers(gameState.levers) == 1 || lever.bomb) {
       gameState.levers = createLevers(numPlayers + 1)
@@ -19,14 +19,14 @@ export default mutation(async ({ db }, leverNumber: number) => {
   }
 })
 
-const canFlipLever = (lever: any) => !lever.flipped
+const canFlipLever = (lever: Lever) => !lever.flipped
 
-const unflippedLevers = (levers: any): number =>
-  levers.filter((l: any) => !l.flipped).length
+const unflippedLevers = (levers: Lever[]): number =>
+  levers.filter((l) => !l.flipped).length
 
 // returns an index to the next alive player. also goes
 // in a circle through the array.
-const nextPlayer = (currentPlayer: number, players: any): number => {
+const nextPlayer = (currentPlayer: number, players: Player[]): number => {
   for (let i = 1; i < players.length; ++i) {
     const possibleNextPlayer = (currentPlayer + i) % players.length
     if (players[possibleNextPlayer].alive) {
@@ -36,10 +36,10 @@ const nextPlayer = (currentPlayer: number, players: any): number => {
   throw new Error('something went wrong with selecting the next player')
 }
 
-const killCurrentPlayer = (gameState: any) => {
-  const currentPlayer = gameState.playerTurn
+const killCurrentPlayer = (gameState: GameStateWithID) => {
+  const currentPlayer = gameState.playerTurn!
   gameState.players[currentPlayer].alive = false
 }
 
-const numAlivePlayers = (players: any): number =>
+const numAlivePlayers = (players: Player[]): number =>
   players.filter((p: any) => p.alive).length

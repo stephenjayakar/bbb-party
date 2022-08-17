@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.0",
-    "convex": "^0.1.6",
+    "convex": "^0.1.8",
     "next": "latest",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
