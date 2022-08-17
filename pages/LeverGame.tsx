@@ -2,7 +2,8 @@ import { useState } from 'react'
 
 import { useQuery, useMutation } from '../convex/_generated/react'
 
-import ButtonWeDidNotWrite from './ButtonWeDidNotWrite'
+import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
@@ -103,24 +104,26 @@ const LeverGame = () => {
       <BombComponent displayBomb={displayBomb} />
       <h1>lever game: press the buttons!</h1>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
-      <ButtonWeDidNotWrite
+      <ButtonGroup>
+      <Button
         disabled={numPlayers === 0}
         onClick={() => restartGame()}
       >
         Restart game
-      </ButtonWeDidNotWrite>
-      <ButtonWeDidNotWrite
+      </Button>
+      <Button
         disabled={playerJoined || gameInProgress}
         onClick={() => joinGameButtonPressed()}
       >
         Join Game
-      </ButtonWeDidNotWrite>
-      <ButtonWeDidNotWrite
+      </Button>
+      <Button
         disabled={!canStartGame}
         onClick={() => startGameButtonPressed()}
       >
         Start game
-      </ButtonWeDidNotWrite>
+      </Button>
+      </ButtonGroup>
       <div className="leverGame">
         {playerJoined && <p>You are player {playerNumber}</p>}
         {gameInProgress && localGameState.playerNumber !== NO_PLAYER && (
@@ -162,6 +165,7 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
       ) : (
         <>
           <p>One of these levers is a 💣</p>
+          <span>
           {gameState.levers.map((lever: any, index: number) => (
             <LeverComponent
               lever={lever}
@@ -170,6 +174,7 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
               flipLever={flipLeverButtonPressed}
             />
           ))}
+          </span>
         </>
       )}
     </>

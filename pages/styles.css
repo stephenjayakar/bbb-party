@@ -1,56 +1,56 @@
 .lever {
-    width: fit-content;
-    height: fit-content;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-    margin: 4 4 4 4;
-    font-size: 100px;
+  width: fit-content;
+  height: fit-content;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  margin: 4 4 4 4;
+  font-size: 74px;
 }
 
 .page {
-    background-color: #ffccfc;
+  background-color: #ffccfc;
 }
 
 .counter {
-    background-color: #e1defa;
+  background-color: #e1defa;
 }
 
 .leverGame {
-    background-color: #e1defa;
-    padding: 24px;
+  background-color: #e1defa;
+  padding: 24px;
 }
 
 .yourTurn {
-    font-size: 20;
-    background-color: #e4ffb8;
+  font-size: 20;
+  background-color: #e4ffb8;
 }
 
 .dead {
-    background-color: #fa98b4;
-    font-family: 'Lucida Console', 'Courier New', monospace;
-    font-size: 36px;
+  background-color: #fa98b4;
+  font-family: 'Lucida Console', 'Courier New', monospace;
+  font-size: 36px;
 }
 
 .survived {
-    background-color: #c2ffd4;
-    font-family: 'Brush Script MT';
-    font-size: 36px;
+  background-color: #c2ffd4;
+  font-family: 'Brush Script MT';
+  font-size: 36px;
 }
 
 .bomb {
-    background: red;
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    font-size: 100px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    overflow: auto;
+  background: red;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  font-size: 100px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
 }
