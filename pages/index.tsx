@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import LeverGame from './LeverGame'
-// import Room from './Room'
+import Room from './Room'
 
 const Home: NextPage = () => {
   return (
@@ -13,7 +13,6 @@ const Home: NextPage = () => {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel='icon' href='/favicon.ico' />
         </Head>
-
         <main className={styles.main}>
           <span className='counter'>
             <h1 className={styles.title}>
