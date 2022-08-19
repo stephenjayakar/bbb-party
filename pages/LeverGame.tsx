@@ -117,7 +117,7 @@ const LeverGame = () => {
       <h1>lever game: press the buttons!</h1>
       {numPlayers !== 0 && <p>Number of joined players: {numPlayers}</p>}
       <ButtonGroup>
-        <Button disabled={numPlayers === 0} onClick={() => restartGame()}>
+        <Button disabled={true} onClick={() => restartGame()}>
           Restart game
         </Button>
         <Button
