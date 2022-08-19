@@ -171,7 +171,7 @@ const GameComponent = (props: {
 
   return (
     <>
-      {isPlayerTurn && <Alert variant="success">it is your turn!</Alert>}
+      {isPlayerTurn ? <Alert variant="success">it is your turn!</Alert> : <p>It is player {gameState.playerTurn}s turn</p>}
       {!playerIsAlive && (
         <Alert variant="danger">💀 you are dead buddy 💀</Alert>
       )}
