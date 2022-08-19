@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 
+import { Player, Lever, GameState } from '../convex/common'
+
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
 const BOMB_ANIMATION_TIME = 1500 // ms
@@ -24,23 +26,23 @@ const dummyLocalState: LocalGameState = {
   numAlivePlayers: 0,
 }
 
-const getNumAlivePlayers = (players: any): number => {
+const getNumAlivePlayers = (players: Player[]): number => {
   if (players) {
     // TODO: abstract this to a common dir so we can re-use. do it after types.
-    return players.filter((p: any) => p.alive).length
+    return players.filter((p) => p.alive).length
   }
   return 0
 }
 
 const LeverGame = () => {
-  const gameState = useQuery('getGameState') ?? {}
-
+  const gameState = useQuery('getGameState') ?? undefined
+  const gameStatePresent = gameState !== undefined
   const joinGame = useMutation('joinGame')
   const restartGame = useMutation('restartGame')
   const startGame = useMutation('startGame')
 
   const numPlayers =
-    gameState && gameState.players ? gameState.players.length : 0
+    gameStatePresent && gameState.players ? gameState.players.length : 0
 
   const [localGameState, setLocalGameState] = useState(dummyLocalState)
 
@@ -52,6 +54,7 @@ const LeverGame = () => {
   // to invalidate the localstate.
   if (
     gameID !== NO_GAME_ID &&
+    gameStatePresent &&
     gameState._id &&
     gameState._id.toString() !== gameID
   ) {
@@ -61,7 +64,9 @@ const LeverGame = () => {
   // If we detect a player dies. We do this by
   // observing a change in the # of dead players.
   // This also lets us update the variable constantly.
-  const numAlivePlayers = getNumAlivePlayers(gameState.players)
+  const numAlivePlayers = gameStatePresent
+    ? getNumAlivePlayers(gameState.players)
+    : 0
   if (
     gameState &&
     gameState.players &&
@@ -128,7 +133,7 @@ const LeverGame = () => {
           Start game
         </Button>
       </ButtonGroup>
-      <Card bg='light'>
+      <Card bg="light">
         <Card.Body>
           <Card.Title>
             {playerJoined && <p>You are player {playerNumber}</p>}
@@ -142,7 +147,10 @@ const LeverGame = () => {
   )
 }
 
-const GameComponent = (props: { playerNumber: number; gameState: any }) => {
+const GameComponent = (props: {
+  playerNumber: number
+  gameState: GameState
+}) => {
   const { playerNumber, gameState } = props
 
   const flipLever = useMutation('flipLever')
@@ -163,20 +171,20 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 
   return (
     <>
-      {isPlayerTurn && <Alert variant='success'>it is your turn!</Alert>}
+      {isPlayerTurn && <Alert variant="success">it is your turn!</Alert>}
       {!playerIsAlive && (
-        <Alert variant='danger'>💀 you are dead buddy 💀</Alert>
+        <Alert variant="danger">💀 you are dead buddy 💀</Alert>
       )}
       {gameEnded ? (
         <>
-          {playerIsAlive && <p className='survived'>😇 you survived!</p>}
+          {playerIsAlive && <p className="survived">😇 you survived!</p>}
           <p>Game over</p>
         </>
       ) : (
         <>
           <Card.Subtitle>One of these levers is a 💣</Card.Subtitle>
           <span>
-            {gameState.levers.map((lever: any, index: number) => (
+            {gameState.levers.map((lever, index: number) => (
               <LeverComponent
                 lever={lever}
                 key={index}
@@ -193,12 +201,12 @@ const GameComponent = (props: { playerNumber: number; gameState: any }) => {
 
 const LeverComponent = (props: {
   flipLever: (_: number) => void
-  lever: any
+  lever: Lever
   leverNumber: number
 }) => {
   return (
     <button
-      className='lever'
+      className="lever"
       onClick={() => props.flipLever(props.leverNumber)}
     >
       {props.lever.flipped ? '🟩' : '🟥'}
@@ -207,7 +215,7 @@ const LeverComponent = (props: {
 }
 
 const BombComponent = (props: { displayBomb: boolean }) => {
-  return <>{props.displayBomb && <div className='bomb'>💣💥</div>}</>
+  return <>{props.displayBomb && <div className="bomb">💣💥</div>}</>
 }
 
 export default LeverGame

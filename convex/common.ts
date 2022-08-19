@@ -23,6 +23,13 @@ export interface GameStateWithID extends GameState {
   _id: GenericId<string>
 }
 
+export const dummyGameState = (): GameStateWithID => ({
+  players: [],
+  levers: [],
+  isStarted: false,
+  _id: new GenericId('GAME_TABLE', '')
+})
+
 // number is from [0, max) and an integer
 export const getRandomInt = (max: number): number =>
   Math.floor(Math.random() * max)
