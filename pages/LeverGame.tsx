@@ -41,6 +41,8 @@ const LeverGame = () => {
   const restartGame = useMutation('restartGame')
   const startGame = useMutation('startGame')
 
+  const [offlineMode, setOfflineMode] = useState(false)
+
   const numPlayers =
     gameStatePresent && gameState.players ? gameState.players.length : 0
 
@@ -131,6 +133,13 @@ const LeverGame = () => {
           onClick={() => startGameButtonPressed()}
         >
           Start game
+        </Button>
+        <Button
+          onClick={() => {
+            setOfflineMode(!offlineMode)
+          }}
+        >
+          {offlineMode && 'Disable '}Offline mode
         </Button>
       </ButtonGroup>
       <Card bg="light">
