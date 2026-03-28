@@ -1,9 +1,12 @@
 import { mutation } from './_generated/server'
 import { GAME_TABLE } from './common'
 
-export default mutation(async ({ db }) => {
-  let gameState = await db.table(GAME_TABLE).first()
-  if (gameState !== null) {
-    db.delete(gameState._id)
-  }
+export const restartGame = mutation({
+  args: {},
+  handler: async ({ db }) => {
+    const gameState = await db.query(GAME_TABLE).first()
+    if (gameState !== null) {
+      await db.delete(gameState._id)
+    }
+  },
 })

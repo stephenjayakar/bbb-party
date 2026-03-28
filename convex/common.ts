@@ -1,4 +1,4 @@
-import { GenericId } from 'convex/values'
+import type { Doc } from './_generated/dataModel'
 
 export const GAME_TABLE = 'game_table'
 
@@ -15,20 +15,10 @@ export interface GameState {
   players: Player[]
   levers: Lever[]
   isStarted: boolean
-  // Possibly make this required
   playerTurn?: number
 }
 
-export interface GameStateWithID extends GameState {
-  _id: GenericId<string>
-}
-
-export const dummyGameState = (): GameStateWithID => ({
-  players: [],
-  levers: [],
-  isStarted: false,
-  _id: new GenericId('GAME_TABLE', '')
-})
+export type GameStateWithID = Doc<'game_table'>
 
 // number is from [0, max) and an integer
 export const getRandomInt = (max: number): number =>

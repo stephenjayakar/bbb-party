@@ -1,37 +1,45 @@
 import { mutation } from './_generated/server'
+import { v } from 'convex/values'
 import { GAME_TABLE, GameStateWithID } from './common'
-import { GenericId } from 'convex/values'
 
-export default mutation(
-  async (
+export const joinGame = mutation({
+  args: {
+    numClientPlayers: v.number(),
+  },
+  handler: async (
     { db },
-    numClientPlayers: number
+    { numClientPlayers }
   ): Promise<{
     playerNumber: number
     gameState: GameStateWithID
   }> => {
-    let gameState = await db.table(GAME_TABLE).first()
-    let gameID: GenericId<string>
+    let gameState = await db.query(GAME_TABLE).first()
     const numPlayers = gameState ? gameState.players.length : 0
     if (numClientPlayers !== numPlayers) {
       throw new Error('Local game state does not match current state')
     }
+
     if (gameState === null) {
-      gameState = {
+      const gameID = await db.insert(GAME_TABLE, {
         players: [{ alive: true }],
         levers: [],
         isStarted: false,
-      }
-      gameID = db.insert(GAME_TABLE, gameState)
+      })
+      gameState = await db.get(gameID)
     } else {
-      gameState.players.push({ alive: true })
-      db.replace(gameState._id, gameState)
-      gameID = gameState._id
+      await db.patch(gameState._id, {
+        players: [...gameState.players, { alive: true }],
+      })
+      gameState = await db.get(gameState._id)
     }
-    gameState._id = gameID
+
+    if (gameState === null) {
+      throw new Error('Game state was not created')
+    }
+
     return {
       playerNumber: numPlayers,
       gameState,
     }
-  }
-)
+  },
+})

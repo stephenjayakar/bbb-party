@@ -1,13 +1,9 @@
 import { query } from './_generated/server'
-import {
-  GAME_TABLE,
-  GameStateWithID,
-} from './common'
+import { GAME_TABLE, GameStateWithID } from './common'
 
-
-export default query(async ({ db }): Promise<GameStateWithID> => {
-  const gameState = await db
-    .table(GAME_TABLE)
-    .first()
-  return gameState
+export const getGameState = query({
+  args: {},
+  handler: async ({ db }): Promise<GameStateWithID | null> => {
+    return await db.query(GAME_TABLE).first()
+  },
 })

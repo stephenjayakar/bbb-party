@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { useQuery, useMutation } from '../convex/_generated/react'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '../convex/_generated/api'
 
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
@@ -68,12 +69,13 @@ function getNumAlivePlayers (players: Player[]): number {
 }
 
 function LiveLeverGame () {
-  const gameState = useQuery('getGameState') ?? undefined
+  const gameStateResult = useQuery(api.getGameState.getGameState, {})
+  const gameState = gameStateResult ?? undefined
   const gameStatePresent = gameState !== undefined
-  const joinGame = useMutation('joinGame')
-  const restartGame = useMutation('restartGame')
-  const startGame = useMutation('startGame')
-  const flipLever = useMutation('flipLever')
+  const joinGame = useMutation(api.joinGame.joinGame)
+  const restartGame = useMutation(api.restartGame.restartGame)
+  const startGame = useMutation(api.startGame.startGame)
+  const flipLever = useMutation(api.flipLever.flipLever)
 
   const numPlayers =
     gameStatePresent && gameState.players ? gameState.players.length : 0
@@ -126,7 +128,7 @@ function LiveLeverGame () {
 
   const joinGameButtonPressed = async () => {
     try {
-      const joinGameResponse = await joinGame(numPlayers)
+      const joinGameResponse = await joinGame({ numClientPlayers: numPlayers })
 
       setLocalGameState({
         ...dummyLocalState,
@@ -142,12 +144,12 @@ function LiveLeverGame () {
   const canStartGame = numPlayers >= 2 && !gameState?.isStarted
   const startGameButtonPressed = () => {
     if (canStartGame) {
-      startGame()
+      void startGame({})
     }
   }
 
   const restartGameButtonPressed = () => {
-    restartGame()
+    void restartGame({})
     setLocalGameState(dummyLocalState)
     setDisplayBomb(false)
   }
@@ -157,7 +159,7 @@ function LiveLeverGame () {
       const isPlayerTurn = playerNumber === gameState.playerTurn
       const gameEnded = gameState.isStarted && gameState.levers.length <= 2
       if (isPlayerTurn && !gameEnded) {
-        flipLever(leverNumber)
+        void flipLever({ leverNumber })
       }
     }
   }

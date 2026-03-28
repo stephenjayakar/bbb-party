@@ -1,13 +1,20 @@
 import { query } from './_generated/server'
+import { v } from 'convex/values'
 
-export default query(async ({ db }, roomName: string): Promise<Array<string>> => {
-  const roomDoc = await db
-    .table('rooms_table')
-    .filter((q) => q.eq(q.field('name'), roomName))
-    .first()
-  console.log('Got stuff')
-  if (roomDoc === null) {
-    return [];
-  }
-  return roomDoc.players;
+export const getRoomPlayers = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async ({ db }, { roomName }): Promise<string[]> => {
+    const roomDoc = await db
+      .query('rooms_table')
+      .withIndex('by_name', (q) => q.eq('name', roomName))
+      .unique()
+
+    if (roomDoc === null) {
+      return []
+    }
+
+    return roomDoc.players
+  },
 })

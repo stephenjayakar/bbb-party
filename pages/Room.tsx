@@ -1,18 +1,23 @@
 import { useState } from 'react'
-import { useQuery, useMutation } from '../convex/_generated/react'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '../convex/_generated/api'
 
 const Room = () => {
   const [playerName, setPlayerName] = useState('')
   const [roomName, setRoomName] = useState('')
 
-  const addPlayerToRoom = useMutation('addPlayerToRoom')
-  const getRoomPlayers = useQuery('getRoomPlayers', roomName) ?? []
+  const addPlayerToRoom = useMutation(api.addPlayerToRoom.addPlayerToRoom)
+  const getRoomPlayers =
+    useQuery(
+      api.getRoomPlayers.getRoomPlayers,
+      roomName === '' ? 'skip' : { roomName }
+    ) ?? []
 
   const joinedRoom = (): boolean => roomName !== ''
   const joinRoom = (newRoomName: string, newPlayerName: string) => {
     setRoomName(newRoomName)
     setPlayerName(newPlayerName)
-    addPlayerToRoom(newRoomName, newPlayerName)
+    void addPlayerToRoom({ room: newRoomName, player: newPlayerName })
   }
 
   if (joinedRoom()) {

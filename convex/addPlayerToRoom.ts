@@ -1,22 +1,27 @@
 import { mutation } from './_generated/server'
+import { v } from 'convex/values'
 
-export default mutation(
-  async ({ db }, room: string, player: string) => {
-    let roomDoc = await db
-      .table('rooms_table')
-      .filter((q) => q.eq(q.field('name'), room))
-      .first()
+export const addPlayerToRoom = mutation({
+  args: {
+    room: v.string(),
+    player: v.string(),
+  },
+  handler: async ({ db }, { room, player }) => {
+    const roomDoc = await db
+      .query('rooms_table')
+      .withIndex('by_name', (q) => q.eq('name', room))
+      .unique()
+
     if (roomDoc === null) {
-      roomDoc = {
+      await db.insert('rooms_table', {
         name: room,
         players: [player],
-      }
-      db.insert('rooms_table', roomDoc)
-    } else {
-      roomDoc.players.push(player)
-      db.replace(roomDoc._id, roomDoc)
+      })
+      return
     }
-    // Like console.log but relays log messages from the server to client.
-    console.log(`Value of players is now ${roomDoc.players}`)
-  }
-)
+
+    await db.patch(roomDoc._id, {
+      players: [...roomDoc.players, player],
+    })
+  },
+})
