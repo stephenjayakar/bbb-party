@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from 'react-bootstrap/Card'
 
-import { Player, Lever, GameState } from '../convex/common'
+import { LEVER_COLORS, Player, Lever, GameState } from '../convex/common'
 
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
@@ -18,28 +18,6 @@ const CONFETTI_ANIMATION_TIME = 1200 // ms
 const CLIENT_ID_STORAGE_KEY = 'bbb-party-client-id'
 const LOCAL_GAME_STATE_STORAGE_KEY = 'bbb-party-local-game-state'
 const PLAYER_NAME_STORAGE_KEY = 'bbb-party-player-name'
-const LEVER_COLORS = [
-  'red',
-  'purple',
-  'yellow',
-  'green',
-  'white',
-  'blue',
-  'orange',
-  'pink',
-  'teal',
-  'black',
-  'cyan',
-  'lime',
-  'gold',
-  'silver',
-  'navy',
-  'maroon',
-  'peach',
-  'mint',
-  'lavender',
-  'coral',
-] as const
 
 interface LocalGameState {
   playerNumber: number
@@ -81,11 +59,11 @@ const mockMidgameState: GameState = {
     { alive: true, name: 'Yoshi' },
   ],
   levers: [
-    { bomb: false, flipped: true },
-    { bomb: false, flipped: false },
-    { bomb: false, flipped: true },
-    { bomb: false, flipped: false },
-    { bomb: true, flipped: false },
+    { bomb: false, color: 'pink', flipped: true },
+    { bomb: false, color: 'green', flipped: false },
+    { bomb: false, color: 'white', flipped: true },
+    { bomb: false, color: 'cyan', flipped: false },
+    { bomb: true, color: 'purple', flipped: false },
   ],
 }
 
@@ -779,7 +757,7 @@ function LeverComponent (props: {
   lever: Lever
   leverNumber: number
 }) {
-  const leverColor = LEVER_COLORS[props.leverNumber] ?? 'red'
+  const leverColor = props.lever.color ?? LEVER_COLORS[props.leverNumber % LEVER_COLORS.length]
 
   return (
     <button

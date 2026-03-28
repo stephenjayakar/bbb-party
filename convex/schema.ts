@@ -13,6 +13,7 @@ export default defineSchema({
     levers: v.array(
       v.object({
         bomb: v.boolean(),
+        color: v.optional(v.string()),
         flipped: v.boolean(),
       })
     ),
