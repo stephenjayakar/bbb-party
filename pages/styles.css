@@ -492,6 +492,15 @@
   box-shadow: 0 12px 24px rgba(154, 182, 165, 0.3);
 }
 
+.runItBackButton.btn {
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffcf64 0%, #e3911e 100%);
+  color: #5b2407;
+  font-weight: 900;
+  box-shadow: 0 12px 20px rgba(194, 121, 22, 0.24);
+}
+
 .roundSubtitle {
   margin-top: 0.3rem;
   color: #2e1b12;

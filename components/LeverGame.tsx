@@ -39,6 +39,7 @@ interface GameShellProps {
   onSavePlayerName?: () => void
   onJoinGame?: () => void
   onRestartGame?: () => void
+  onRunItBack?: () => void
   onStartGame?: () => void
   onFlipLever?: (_: number) => void
   previewLabel?: string
@@ -164,6 +165,7 @@ function LiveLeverGame () {
   const gameStatePresent = gameState !== undefined
   const joinGame = useMutation(api.joinGame.joinGame)
   const restartGame = useMutation(api.restartGame.restartGame)
+  const runItBack = useMutation(api.runItBack.runItBack)
   const setPlayerName = useMutation(api.setPlayerName.setPlayerName)
   const startGame = useMutation(api.startGame.startGame)
   const flipLever = useMutation(api.flipLever.flipLever)
@@ -348,6 +350,14 @@ function LiveLeverGame () {
     void restartGame({})
     setDisplayBomb(false)
     setDisplayConfetti(false)
+    setLocalGameState(dummyLocalState)
+    clearStoredLocalGameState()
+  }
+
+  const runItBackButtonPressed = () => {
+    void runItBack({})
+    setDisplayBomb(false)
+    setDisplayConfetti(false)
   }
 
   const flipLeverButtonPressed = (leverNumber: number) => {
@@ -371,6 +381,7 @@ function LiveLeverGame () {
       onSavePlayerName={savePlayerNameButtonPressed}
       onJoinGame={joinGameButtonPressed}
       onRestartGame={restartGameButtonPressed}
+      onRunItBack={runItBackButtonPressed}
       onStartGame={startGameButtonPressed}
       onFlipLever={flipLeverButtonPressed}
     />
@@ -405,6 +416,7 @@ function GameShell (props: GameShellProps) {
     onSavePlayerName,
     onJoinGame,
     onRestartGame,
+    onRunItBack,
     onStartGame,
     onFlipLever,
     previewLabel,
@@ -507,7 +519,7 @@ function GameShell (props: GameShellProps) {
 
       <ButtonGroup className="controlRow">
         <Button disabled={numPlayers === 0 || previewLabel !== undefined} onClick={onRestartGame}>
-          {gameEnded ? 'Run it back' : 'Restart game'}
+          Restart game
         </Button>
         <Button
           disabled={playerJoined || gameInProgress || previewLabel !== undefined}
@@ -552,6 +564,7 @@ function GameShell (props: GameShellProps) {
               gameState={gameState}
               playerNumber={localGameState.playerNumber}
               onFlipLever={onFlipLever}
+              onRunItBack={onRunItBack}
             />
           )}
           {!gameInProgress && numPlayers >= 2 && (
@@ -569,8 +582,9 @@ function GameComponent (props: {
   playerNumber: number
   gameState: GameState
   onFlipLever?: (_: number) => void
+  onRunItBack?: () => void
 }) {
-  const { playerNumber, gameState, onFlipLever } = props
+  const { playerNumber, gameState, onFlipLever, onRunItBack } = props
   const gameEnded = gameState.isStarted && gameState.levers.length <= 2
   const isPlayerTurn = !gameEnded && playerNumber === gameState.playerTurn
   const playerIsAlive = gameState.players[playerNumber].alive
@@ -593,12 +607,17 @@ function GameComponent (props: {
       {!playerIsAlive && (
         <Alert variant="danger">💀 you are dead buddy 💀</Alert>
       )}
-      {gameEnded ? (
-        <>
-          {playerIsAlive && <p className="survived">😇 you survived!</p>}
-          <p>Game over. Hit restart game to run it back with the same players.</p>
-        </>
-      ) : (
+          {gameEnded ? (
+            <>
+              {playerIsAlive && <p className="survived">😇 you survived!</p>}
+              <p>Game over. Hit run it back to replay with the same players.</p>
+              {onRunItBack && (
+                <Button className="runItBackButton" onClick={onRunItBack}>
+                  Run it back
+                </Button>
+              )}
+            </>
+          ) : (
         <>
           <Card.Subtitle className="roundSubtitle">
             One of these levers is a 💣
