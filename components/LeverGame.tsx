@@ -127,6 +127,66 @@ function playSafeTick (audioContextRef: MutableRefObject<AudioContext | null>) {
   oscillator.stop(now + 0.09)
 }
 
+function playKaboom (audioContextRef: MutableRefObject<AudioContext | null>) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const AudioContextCtor =
+    window.AudioContext ??
+    (
+      window as Window & {
+        webkitAudioContext?: typeof AudioContext
+      }
+    ).webkitAudioContext
+  if (AudioContextCtor === undefined) {
+    return
+  }
+
+  const audioContext = audioContextRef.current ?? new AudioContextCtor()
+  audioContextRef.current = audioContext
+
+  if (audioContext.state === 'suspended') {
+    void audioContext.resume()
+  }
+
+  const now = audioContext.currentTime
+  const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.45, audioContext.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length)
+  }
+
+  const noiseSource = audioContext.createBufferSource()
+  const noiseFilter = audioContext.createBiquadFilter()
+  const noiseGain = audioContext.createGain()
+  noiseSource.buffer = buffer
+  noiseFilter.type = 'lowpass'
+  noiseFilter.frequency.setValueAtTime(900, now)
+  noiseFilter.frequency.exponentialRampToValueAtTime(140, now + 0.32)
+  noiseGain.gain.setValueAtTime(0.0001, now)
+  noiseGain.gain.exponentialRampToValueAtTime(0.55, now + 0.02)
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4)
+  noiseSource.connect(noiseFilter)
+  noiseFilter.connect(noiseGain)
+  noiseGain.connect(audioContext.destination)
+  noiseSource.start(now)
+  noiseSource.stop(now + 0.42)
+
+  const boomOscillator = audioContext.createOscillator()
+  const boomGain = audioContext.createGain()
+  boomOscillator.type = 'sawtooth'
+  boomOscillator.frequency.setValueAtTime(180, now)
+  boomOscillator.frequency.exponentialRampToValueAtTime(42, now + 0.38)
+  boomGain.gain.setValueAtTime(0.0001, now)
+  boomGain.gain.exponentialRampToValueAtTime(0.24, now + 0.015)
+  boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36)
+  boomOscillator.connect(boomGain)
+  boomGain.connect(audioContext.destination)
+  boomOscillator.start(now)
+  boomOscillator.stop(now + 0.38)
+}
+
 function readStoredLocalGameState (): LocalGameState | null {
   if (typeof window === 'undefined') {
     return null
@@ -308,6 +368,7 @@ function LiveLeverGame () {
 
     const localPlayerAlive = gameState.players[playerNumber].alive
     if (lastLocalPlayerAlive.current === true && !localPlayerAlive) {
+      playKaboom(audioContextRef)
       setDisplayBomb(true)
       setBombSequence((currentSequence) => currentSequence + 1)
     }
