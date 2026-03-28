@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, MutableRefObject } from 'react'
 
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
@@ -78,6 +78,53 @@ function getNumAlivePlayers (players: Player[]): number {
     return players.filter((player) => player.alive).length
   }
   return 0
+}
+
+function playSafeTick (audioContextRef: MutableRefObject<AudioContext | null>) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const AudioContextCtor =
+    window.AudioContext ??
+    (
+      window as Window & {
+        webkitAudioContext?: typeof AudioContext
+      }
+    ).webkitAudioContext
+  if (AudioContextCtor === undefined) {
+    return
+  }
+
+  const audioContext = audioContextRef.current ?? new AudioContextCtor()
+  audioContextRef.current = audioContext
+
+  if (audioContext.state === 'suspended') {
+    void audioContext.resume()
+  }
+
+  const now = audioContext.currentTime
+  const oscillator = audioContext.createOscillator()
+  const gainNode = audioContext.createGain()
+  const filter = audioContext.createBiquadFilter()
+
+  oscillator.type = 'triangle'
+  oscillator.frequency.setValueAtTime(1240, now)
+  oscillator.frequency.exponentialRampToValueAtTime(1720, now + 0.045)
+
+  filter.type = 'highpass'
+  filter.frequency.setValueAtTime(700, now)
+
+  gainNode.gain.setValueAtTime(0.0001, now)
+  gainNode.gain.exponentialRampToValueAtTime(0.05, now + 0.01)
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.085)
+
+  oscillator.connect(filter)
+  filter.connect(gainNode)
+  gainNode.connect(audioContext.destination)
+
+  oscillator.start(now)
+  oscillator.stop(now + 0.09)
 }
 
 function readStoredLocalGameState (): LocalGameState | null {
@@ -160,6 +207,7 @@ function getClientId () {
 
 function LiveLeverGame () {
   const clientIdRef = useRef<string>(getClientId())
+  const audioContextRef = useRef<AudioContext | null>(null)
   const gameStateResult = useQuery(api.getGameState.getGameState, {})
   const gameState = gameStateResult ?? undefined
   const gameStatePresent = gameState !== undefined
@@ -243,6 +291,7 @@ function LiveLeverGame () {
       lastAlivePlayers.current !== null && alivePlayers === lastAlivePlayers.current
 
     if (gameState.isStarted && leversDropped && nobodyDied) {
+      playSafeTick(audioContextRef)
       setDisplayConfetti(true)
       setConfettiSequence((currentSequence) => currentSequence + 1)
     }
