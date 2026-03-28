@@ -15,6 +15,7 @@ const NO_PLAYER = -1
 const NO_GAME_ID = ''
 const BOMB_ANIMATION_TIME = 1500 // ms
 const CONFETTI_ANIMATION_TIME = 1200 // ms
+const LOCAL_GAME_STATE_STORAGE_KEY = 'bbb-party-local-game-state'
 const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
 
 interface LocalGameState {
@@ -68,6 +69,53 @@ function getNumAlivePlayers (players: Player[]): number {
   return 0
 }
 
+function readStoredLocalGameState (): LocalGameState | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const rawValue = window.localStorage.getItem(LOCAL_GAME_STATE_STORAGE_KEY)
+  if (rawValue === null) {
+    return null
+  }
+
+  try {
+    const parsedValue = JSON.parse(rawValue) as Partial<LocalGameState>
+    if (
+      typeof parsedValue.gameID === 'string' &&
+      typeof parsedValue.playerNumber === 'number'
+    ) {
+      return {
+        gameID: parsedValue.gameID,
+        playerNumber: parsedValue.playerNumber,
+      }
+    }
+  } catch (error) {
+    console.error(error)
+  }
+
+  return null
+}
+
+function writeStoredLocalGameState (localGameState: LocalGameState) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.setItem(
+    LOCAL_GAME_STATE_STORAGE_KEY,
+    JSON.stringify(localGameState)
+  )
+}
+
+function clearStoredLocalGameState () {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.removeItem(LOCAL_GAME_STATE_STORAGE_KEY)
+}
+
 function LiveLeverGame () {
   const gameStateResult = useQuery(api.getGameState.getGameState, {})
   const gameState = gameStateResult ?? undefined
@@ -99,8 +147,26 @@ function LiveLeverGame () {
       gameState._id.toString() !== gameID
     ) {
       setLocalGameState(dummyLocalState)
+      clearStoredLocalGameState()
     }
   }, [gameID, gameState, gameStatePresent])
+
+  useEffect(() => {
+    if (!gameState || localGameState.playerNumber !== NO_PLAYER) {
+      return
+    }
+
+    const storedLocalGameState = readStoredLocalGameState()
+    if (
+      storedLocalGameState !== null &&
+      storedLocalGameState.gameID === gameState._id.toString() &&
+      storedLocalGameState.playerNumber < gameState.players.length
+    ) {
+      setLocalGameState(storedLocalGameState)
+      lastLocalPlayerAlive.current =
+        gameState.players[storedLocalGameState.playerNumber]?.alive ?? true
+    }
+  }, [gameState, localGameState.playerNumber])
 
   useEffect(() => {
     if (!gameState) {
@@ -163,6 +229,14 @@ function LiveLeverGame () {
 
     return () => clearTimeout(timeout)
   }, [confettiSequence, displayConfetti])
+
+  useEffect(() => {
+    if (localGameState.gameID === NO_GAME_ID) {
+      return
+    }
+
+    writeStoredLocalGameState(localGameState)
+  }, [localGameState])
 
   const joinGameButtonPressed = async () => {
     try {
