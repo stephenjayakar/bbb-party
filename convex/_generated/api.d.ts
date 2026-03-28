@@ -15,6 +15,7 @@ import type * as getGameState from "../getGameState.js";
 import type * as getRoomPlayers from "../getRoomPlayers.js";
 import type * as joinGame from "../joinGame.js";
 import type * as restartGame from "../restartGame.js";
+import type * as setPlayerName from "../setPlayerName.js";
 import type * as startGame from "../startGame.js";
 
 import type {
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   getRoomPlayers: typeof getRoomPlayers;
   joinGame: typeof joinGame;
   restartGame: typeof restartGame;
+  setPlayerName: typeof setPlayerName;
   startGame: typeof startGame;
 }>;
 
