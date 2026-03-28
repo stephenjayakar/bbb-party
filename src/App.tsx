@@ -3,7 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 
 import LeverGame, { LeverGamePreview } from '../components/LeverGame'
-import Room from '../pages/Room'
+import Room from './Room'
 import styles from '../styles/Home.module.css'
 
 const convexUrl = import.meta.env.VITE_CONVEX_URL
