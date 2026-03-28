@@ -9,4 +9,5 @@ Deployment notes:
 - This app deploys as a Vite app on Vercel, not Next.js.
 - Keep Vercel Node configured to `22.x` for this project.
 - `VITE_CONVEX_URL` must be present in Vercel project env vars for preview and production deploys, or the app will fall back to its local setup message.
+- Follow code changes with `vercel deploy --yes`, then make a git commit and push the branch unless the user says not to.
 <!-- convex-ai-end -->

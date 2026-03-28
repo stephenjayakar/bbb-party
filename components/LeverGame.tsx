@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
@@ -18,7 +18,6 @@ const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
 interface LocalGameState {
   playerNumber: number
   gameID: string
-  numAlivePlayers: number
 }
 
 interface LeverGameProps {
@@ -39,7 +38,6 @@ interface GameShellProps {
 const dummyLocalState: LocalGameState = {
   playerNumber: NO_PLAYER,
   gameID: NO_GAME_ID,
-  numAlivePlayers: 0,
 }
 
 const mockMidgameState: GameState = {
@@ -58,7 +56,6 @@ const mockMidgameState: GameState = {
 const mockMidgameLocalState: LocalGameState = {
   playerNumber: 2,
   gameID: 'preview-midgame',
-  numAlivePlayers: getNumAlivePlayers(mockMidgameState.players),
 }
 
 function getNumAlivePlayers (players: Player[]): number {
@@ -82,11 +79,10 @@ function LiveLeverGame () {
 
   const [localGameState, setLocalGameState] = useState(dummyLocalState)
   const [displayBomb, setDisplayBomb] = useState(false)
+  const [bombSequence, setBombSequence] = useState(0)
+  const lastLocalPlayerAlive = useRef<boolean | null>(null)
 
   const { playerNumber, gameID } = localGameState
-  const numAlivePlayers = gameStatePresent
-    ? getNumAlivePlayers(gameState.players)
-    : 0
 
   useEffect(() => {
     if (
@@ -100,26 +96,19 @@ function LiveLeverGame () {
   }, [gameID, gameState, gameStatePresent])
 
   useEffect(() => {
-    if (!gameState || !gameState.players) {
+    if (!gameState || playerNumber === NO_PLAYER || playerNumber >= gameState.players.length) {
+      lastLocalPlayerAlive.current = null
       return
     }
 
-    if (localGameState.numAlivePlayers !== numAlivePlayers) {
-      if (numAlivePlayers < localGameState.numAlivePlayers) {
-        setDisplayBomb(true)
-        setLocalGameState((currentState) => ({
-          ...currentState,
-          numAlivePlayers,
-        }))
-        return
-      }
-
-      setLocalGameState((currentState) => ({
-        ...currentState,
-        numAlivePlayers,
-      }))
+    const localPlayerAlive = gameState.players[playerNumber].alive
+    if (lastLocalPlayerAlive.current === true && !localPlayerAlive) {
+      setDisplayBomb(true)
+      setBombSequence((currentSequence) => currentSequence + 1)
     }
-  }, [gameState, localGameState.numAlivePlayers, numAlivePlayers])
+
+    lastLocalPlayerAlive.current = localPlayerAlive
+  }, [gameState, playerNumber])
 
   useEffect(() => {
     if (!displayBomb) {
@@ -131,7 +120,7 @@ function LiveLeverGame () {
     }, BOMB_ANIMATION_TIME)
 
     return () => clearTimeout(timeout)
-  }, [displayBomb])
+  }, [bombSequence, displayBomb])
 
   const joinGameButtonPressed = async () => {
     try {
@@ -141,8 +130,9 @@ function LiveLeverGame () {
         ...dummyLocalState,
         playerNumber: joinGameResponse.playerNumber,
         gameID: joinGameResponse.gameState._id.toString(),
-        numAlivePlayers: getNumAlivePlayers(joinGameResponse.gameState.players),
       })
+      lastLocalPlayerAlive.current =
+        joinGameResponse.gameState.players[joinGameResponse.playerNumber]?.alive ?? true
     } catch (error) {
       console.log(error)
     }
