@@ -5,11 +5,12 @@ import { GAME_TABLE, GameStateWithID } from './common'
 export const joinGame = mutation({
   args: {
     clientId: v.string(),
+    name: v.string(),
     numClientPlayers: v.number(),
   },
   handler: async (
     { db },
-    { clientId, numClientPlayers }
+    { clientId, name, numClientPlayers }
   ): Promise<{
     playerNumber: number
     gameState: GameStateWithID
@@ -22,6 +23,19 @@ export const joinGame = mutation({
         (player) => player.clientId === clientId
       )
       if (existingPlayerNumber !== -1) {
+        const existingPlayer = gameState.players[existingPlayerNumber]
+        if (existingPlayer.name !== name) {
+          const players = [...gameState.players]
+          players[existingPlayerNumber] = {
+            ...existingPlayer,
+            name,
+          }
+          await db.patch(gameState._id, { players })
+          const updatedGameState = await db.get(gameState._id)
+          if (updatedGameState !== null) {
+            gameState = updatedGameState
+          }
+        }
         return {
           playerNumber: existingPlayerNumber,
           gameState,
@@ -35,14 +49,14 @@ export const joinGame = mutation({
 
     if (gameState === null) {
       const gameID = await db.insert(GAME_TABLE, {
-        players: [{ alive: true, clientId }],
+        players: [{ alive: true, clientId, name }],
         levers: [],
         isStarted: false,
       })
       gameState = await db.get(gameID)
     } else {
       await db.patch(gameState._id, {
-        players: [...gameState.players, { alive: true, clientId }],
+        players: [...gameState.players, { alive: true, clientId, name }],
       })
       gameState = await db.get(gameState._id)
     }

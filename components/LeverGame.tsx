@@ -17,6 +17,7 @@ const BOMB_ANIMATION_TIME = 1500 // ms
 const CONFETTI_ANIMATION_TIME = 1200 // ms
 const CLIENT_ID_STORAGE_KEY = 'bbb-party-client-id'
 const LOCAL_GAME_STATE_STORAGE_KEY = 'bbb-party-local-game-state'
+const PLAYER_NAME_STORAGE_KEY = 'bbb-party-player-name'
 const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
 
 interface LocalGameState {
@@ -31,8 +32,11 @@ interface LeverGameProps {
 interface GameShellProps {
   gameState?: GameState
   localGameState: LocalGameState
+  playerName: string
   displayBomb: boolean
   displayConfetti: boolean
+  onPlayerNameChange?: (_: string) => void
+  onSavePlayerName?: () => void
   onJoinGame?: () => void
   onRestartGame?: () => void
   onStartGame?: () => void
@@ -48,7 +52,12 @@ const dummyLocalState: LocalGameState = {
 const mockMidgameState: GameState = {
   isStarted: true,
   playerTurn: 2,
-  players: [{ alive: true }, { alive: false }, { alive: true }, { alive: true }],
+  players: [
+    { alive: true, name: 'Mario' },
+    { alive: false, name: 'Luigi' },
+    { alive: true, name: 'Peach' },
+    { alive: true, name: 'Yoshi' },
+  ],
   levers: [
     { bomb: false, flipped: true },
     { bomb: false, flipped: false },
@@ -117,6 +126,22 @@ function clearStoredLocalGameState () {
   window.localStorage.removeItem(LOCAL_GAME_STATE_STORAGE_KEY)
 }
 
+function readStoredPlayerName () {
+  if (typeof window === 'undefined') {
+    return ''
+  }
+
+  return window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) ?? ''
+}
+
+function writeStoredPlayerName (name: string) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.setItem(PLAYER_NAME_STORAGE_KEY, name)
+}
+
 function getClientId () {
   if (typeof window === 'undefined') {
     return 'server'
@@ -139,6 +164,7 @@ function LiveLeverGame () {
   const gameStatePresent = gameState !== undefined
   const joinGame = useMutation(api.joinGame.joinGame)
   const restartGame = useMutation(api.restartGame.restartGame)
+  const setPlayerName = useMutation(api.setPlayerName.setPlayerName)
   const startGame = useMutation(api.startGame.startGame)
   const flipLever = useMutation(api.flipLever.flipLever)
 
@@ -150,6 +176,7 @@ function LiveLeverGame () {
   const [bombSequence, setBombSequence] = useState(0)
   const [displayConfetti, setDisplayConfetti] = useState(false)
   const [confettiSequence, setConfettiSequence] = useState(0)
+  const [playerName, setPlayerNameInput] = useState(readStoredPlayerName())
   const lastLocalPlayerAlive = useRef<boolean | null>(null)
   const lastAlivePlayers = useRef<number | null>(null)
   const lastLeversRemaining = useRef<number | null>(null)
@@ -269,10 +296,32 @@ function LiveLeverGame () {
     writeStoredLocalGameState(localGameState)
   }, [localGameState])
 
+  useEffect(() => {
+    writeStoredPlayerName(playerName)
+  }, [playerName])
+
+  const savePlayerNameButtonPressed = () => {
+    const trimmedPlayerName = playerName.trim()
+    if (trimmedPlayerName === '') {
+      return
+    }
+
+    setPlayerNameInput(trimmedPlayerName)
+
+    if (localGameState.playerNumber !== NO_PLAYER) {
+      void setPlayerName({
+        clientId: clientIdRef.current,
+        name: trimmedPlayerName,
+      })
+    }
+  }
+
   const joinGameButtonPressed = async () => {
     try {
+      const trimmedPlayerName = playerName.trim()
       const joinGameResponse = await joinGame({
         clientId: clientIdRef.current,
+        name: trimmedPlayerName === '' ? 'Mystery Player' : trimmedPlayerName,
         numClientPlayers: numPlayers,
       })
 
@@ -315,8 +364,11 @@ function LiveLeverGame () {
     <GameShell
       gameState={gameState}
       localGameState={localGameState}
+      playerName={playerName}
       displayBomb={displayBomb}
       displayConfetti={displayConfetti}
+      onPlayerNameChange={setPlayerNameInput}
+      onSavePlayerName={savePlayerNameButtonPressed}
       onJoinGame={joinGameButtonPressed}
       onRestartGame={restartGameButtonPressed}
       onStartGame={startGameButtonPressed}
@@ -331,6 +383,7 @@ export function LeverGamePreview ({ preview }: LeverGameProps) {
       <GameShell
         gameState={mockMidgameState}
         localGameState={mockMidgameLocalState}
+        playerName="Peach"
         displayBomb={false}
         displayConfetti={false}
         previewLabel="mocked mid-game state"
@@ -345,8 +398,11 @@ function GameShell (props: GameShellProps) {
   const {
     gameState,
     localGameState,
+    playerName,
     displayBomb,
     displayConfetti,
+    onPlayerNameChange,
+    onSavePlayerName,
     onJoinGame,
     onRestartGame,
     onStartGame,
@@ -441,6 +497,7 @@ function GameShell (props: GameShellProps) {
                 ].filter(Boolean).join(' ')}
               >
                 <span className="playerCap">P{index + 1}</span>
+                <span className="playerName">{player.name ?? `Player ${index + 1}`}</span>
                 <span className="playerState">{player.alive ? 'Ready' : 'Boom'}</span>
               </div>
             )
@@ -468,8 +525,27 @@ function GameShell (props: GameShellProps) {
       <Card bg="light" className="gameCard">
         <Card.Body>
           <Card.Title>
-            {playerJoined && <p>You are player {localGameState.playerNumber + 1}</p>}
+            {playerJoined && (
+              <p>
+                You are player {localGameState.playerNumber + 1}
+                {playerName.trim() !== '' ? `, ${playerName.trim()}` : ''}
+              </p>
+            )}
           </Card.Title>
+          {previewLabel === undefined && (
+            <div className="nameControls">
+              <input
+                className="nameInput"
+                maxLength={24}
+                onChange={(event) => onPlayerNameChange?.(event.target.value)}
+                placeholder="Name yourself"
+                value={playerName}
+              />
+              <Button className="nameSaveButton" onClick={onSavePlayerName}>
+                Save name
+              </Button>
+            </div>
+          )}
           {!playerJoined && <p>Join in, then take turns pulling the levers.</p>}
           {gameStatePresent && gameInProgress && playerJoined && (
             <GameComponent

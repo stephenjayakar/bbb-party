@@ -10,6 +10,7 @@ export interface Lever {
 export interface Player {
   alive: boolean
   clientId?: string
+  name?: string
 }
 
 export interface GameState {

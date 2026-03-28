@@ -7,6 +7,7 @@ export default defineSchema({
       v.object({
         alive: v.boolean(),
         clientId: v.optional(v.string()),
+        name: v.optional(v.string()),
       })
     ),
     levers: v.array(

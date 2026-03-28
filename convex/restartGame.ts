@@ -9,6 +9,7 @@ export const restartGame = mutation({
       const players = gameState.players.map((player) => ({
         alive: true,
         clientId: player.clientId,
+        name: player.name,
       }))
       const canRestartImmediately = players.length > 1
 

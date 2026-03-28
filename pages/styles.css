@@ -399,6 +399,13 @@
   text-transform: uppercase;
 }
 
+.playerName {
+  color: #fffdf4;
+  font-size: 0.96rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
 .playerState {
   color: #ffd690;
   font-size: 0.92rem;
@@ -438,6 +445,37 @@
 
 .gameCard p {
   margin-bottom: 0.45rem;
+}
+
+.nameControls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.nameInput {
+  min-width: 0;
+  padding: 0.72rem 0.9rem;
+  border: 2px solid rgba(122, 56, 32, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 251, 240, 0.92);
+  color: #47210f;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.nameInput::placeholder {
+  color: rgba(71, 33, 15, 0.56);
+}
+
+.nameSaveButton.btn {
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f4b94a 0%, #da8e1d 100%);
+  color: #4f2207;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .readyMessage,
