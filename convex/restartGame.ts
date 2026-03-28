@@ -6,7 +6,10 @@ export const restartGame = mutation({
   handler: async ({ db }) => {
     const gameState = await db.query(GAME_TABLE).first()
     if (gameState !== null) {
-      const players = gameState.players.map(() => ({ alive: true }))
+      const players = gameState.players.map((player) => ({
+        alive: true,
+        clientId: player.clientId,
+      }))
       const canRestartImmediately = players.length > 1
 
       await db.patch(gameState._id, {

@@ -4,31 +4,45 @@ import { GAME_TABLE, GameStateWithID } from './common'
 
 export const joinGame = mutation({
   args: {
+    clientId: v.string(),
     numClientPlayers: v.number(),
   },
   handler: async (
     { db },
-    { numClientPlayers }
+    { clientId, numClientPlayers }
   ): Promise<{
     playerNumber: number
     gameState: GameStateWithID
   }> => {
     let gameState = await db.query(GAME_TABLE).first()
     const numPlayers = gameState ? gameState.players.length : 0
+
+    if (gameState !== null) {
+      const existingPlayerNumber = gameState.players.findIndex(
+        (player) => player.clientId === clientId
+      )
+      if (existingPlayerNumber !== -1) {
+        return {
+          playerNumber: existingPlayerNumber,
+          gameState,
+        }
+      }
+    }
+
     if (numClientPlayers !== numPlayers) {
       throw new Error('Local game state does not match current state')
     }
 
     if (gameState === null) {
       const gameID = await db.insert(GAME_TABLE, {
-        players: [{ alive: true }],
+        players: [{ alive: true, clientId }],
         levers: [],
         isStarted: false,
       })
       gameState = await db.get(gameID)
     } else {
       await db.patch(gameState._id, {
-        players: [...gameState.players, { alive: true }],
+        players: [...gameState.players, { alive: true, clientId }],
       })
       gameState = await db.get(gameState._id)
     }

@@ -15,6 +15,7 @@ const NO_PLAYER = -1
 const NO_GAME_ID = ''
 const BOMB_ANIMATION_TIME = 1500 // ms
 const CONFETTI_ANIMATION_TIME = 1200 // ms
+const CLIENT_ID_STORAGE_KEY = 'bbb-party-client-id'
 const LOCAL_GAME_STATE_STORAGE_KEY = 'bbb-party-local-game-state'
 const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
 
@@ -116,7 +117,23 @@ function clearStoredLocalGameState () {
   window.localStorage.removeItem(LOCAL_GAME_STATE_STORAGE_KEY)
 }
 
+function getClientId () {
+  if (typeof window === 'undefined') {
+    return 'server'
+  }
+
+  const storedClientId = window.localStorage.getItem(CLIENT_ID_STORAGE_KEY)
+  if (storedClientId !== null) {
+    return storedClientId
+  }
+
+  const newClientId = window.crypto.randomUUID()
+  window.localStorage.setItem(CLIENT_ID_STORAGE_KEY, newClientId)
+  return newClientId
+}
+
 function LiveLeverGame () {
+  const clientIdRef = useRef<string>(getClientId())
   const gameStateResult = useQuery(api.getGameState.getGameState, {})
   const gameState = gameStateResult ?? undefined
   const gameStatePresent = gameState !== undefined
@@ -153,6 +170,20 @@ function LiveLeverGame () {
 
   useEffect(() => {
     if (!gameState || localGameState.playerNumber !== NO_PLAYER) {
+      return
+    }
+
+    const serverPlayerNumber = gameState.players.findIndex(
+      (player) => player.clientId === clientIdRef.current
+    )
+    if (serverPlayerNumber !== -1) {
+      const restoredState = {
+        gameID: gameState._id.toString(),
+        playerNumber: serverPlayerNumber,
+      }
+      setLocalGameState(restoredState)
+      writeStoredLocalGameState(restoredState)
+      lastLocalPlayerAlive.current = gameState.players[serverPlayerNumber]?.alive ?? true
       return
     }
 
@@ -240,7 +271,10 @@ function LiveLeverGame () {
 
   const joinGameButtonPressed = async () => {
     try {
-      const joinGameResponse = await joinGame({ numClientPlayers: numPlayers })
+      const joinGameResponse = await joinGame({
+        clientId: clientIdRef.current,
+        numClientPlayers: numPlayers,
+      })
 
       setLocalGameState({
         ...dummyLocalState,
