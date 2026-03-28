@@ -18,7 +18,18 @@ const CONFETTI_ANIMATION_TIME = 1200 // ms
 const CLIENT_ID_STORAGE_KEY = 'bbb-party-client-id'
 const LOCAL_GAME_STATE_STORAGE_KEY = 'bbb-party-local-game-state'
 const PLAYER_NAME_STORAGE_KEY = 'bbb-party-player-name'
-const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
+const LEVER_COLORS = [
+  'red',
+  'purple',
+  'yellow',
+  'green',
+  'white',
+  'blue',
+  'orange',
+  'pink',
+  'teal',
+  'black',
+] as const
 
 interface LocalGameState {
   playerNumber: number

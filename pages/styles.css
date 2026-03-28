@@ -604,6 +604,26 @@
   background: linear-gradient(180deg, #ffffff 0%, var(--party-white) 62%, #b5b5b5 100%);
 }
 
+.leverColorBlue .leverPlunger {
+  background: linear-gradient(180deg, #8fd2ff 0%, #3498db 58%, #165b9a 100%);
+}
+
+.leverColorOrange .leverPlunger {
+  background: linear-gradient(180deg, #ffd29b 0%, #f28c28 58%, #b35208 100%);
+}
+
+.leverColorPink .leverPlunger {
+  background: linear-gradient(180deg, #ffc3df 0%, #ef5da8 58%, #ab2f72 100%);
+}
+
+.leverColorTeal .leverPlunger {
+  background: linear-gradient(180deg, #92f0e0 0%, #1abc9c 58%, #0c7964 100%);
+}
+
+.leverColorBlack .leverPlunger {
+  background: linear-gradient(180deg, #7d7d86 0%, #34343d 58%, #111216 100%);
+}
+
 .survived {
   display: inline-block;
   margin: 0.35rem 0;
