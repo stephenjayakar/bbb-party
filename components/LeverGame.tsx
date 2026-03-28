@@ -206,6 +206,7 @@ function GameShell (props: GameShellProps) {
     ? getNumAlivePlayers(gameState.players)
     : 0
   const gameInProgress = Boolean(gameState?.isStarted)
+  const gameEnded = Boolean(gameState?.isStarted && gameState.levers.length <= 2)
   const leversRemaining = gameStatePresent
     ? gameState.levers.filter((lever) => !lever.flipped).length
     : 0
@@ -294,7 +295,7 @@ function GameShell (props: GameShellProps) {
 
       <ButtonGroup className="controlRow">
         <Button disabled={numPlayers === 0 || previewLabel !== undefined} onClick={onRestartGame}>
-          Restart game
+          {gameEnded ? 'Run it back' : 'Restart game'}
         </Button>
         <Button
           disabled={playerJoined || gameInProgress || previewLabel !== undefined}
@@ -356,7 +357,7 @@ function GameComponent (props: {
           it is your turn!
         </Alert>
       ) : (
-        <p className="turnMessage">It is player {gameState.playerTurn}&apos;s turn</p>
+        <p className="turnMessage">It is player {(gameState.playerTurn ?? 0) + 1}&apos;s turn</p>
       )}
       {!playerIsAlive && (
         <Alert variant="danger">💀 you are dead buddy 💀</Alert>
