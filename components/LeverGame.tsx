@@ -150,7 +150,6 @@ function LiveLeverGame () {
 
   const restartGameButtonPressed = () => {
     void restartGame({})
-    setLocalGameState(dummyLocalState)
     setDisplayBomb(false)
   }
 
@@ -327,7 +326,9 @@ function GameShell (props: GameShellProps) {
             />
           )}
           {!gameInProgress && numPlayers >= 2 && (
-            <p className="readyMessage">Everybody is in - hit start for the showdown.</p>
+            <p className="readyMessage">
+              Everybody is in - hit start for the showdown.
+            </p>
           )}
         </Card.Body>
       </Card>
@@ -366,7 +367,7 @@ function GameComponent (props: {
       {gameEnded ? (
         <>
           {playerIsAlive && <p className="survived">😇 you survived!</p>}
-          <p>Game over</p>
+          <p>Game over. Hit restart game to run it back with the same players.</p>
         </>
       ) : (
         <>
