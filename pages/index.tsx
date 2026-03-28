@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import LeverGame from './LeverGame'
+import LeverGame from '../components/LeverGame'
 // import Room from './Room'
 
 const Home: NextPage = () => {

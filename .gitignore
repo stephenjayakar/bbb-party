@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/test-results
+/tmp
 
 # next.js
 /.next/
@@ -41,4 +43,3 @@ convex.json
 
 # vscode files
 /.vscode
-
