@@ -107,16 +107,11 @@ function LiveLeverGame () {
     if (localGameState.numAlivePlayers !== numAlivePlayers) {
       if (numAlivePlayers < localGameState.numAlivePlayers) {
         setDisplayBomb(true)
-        const timeout = setTimeout(() => {
-          setDisplayBomb(false)
-        }, BOMB_ANIMATION_TIME)
-
         setLocalGameState((currentState) => ({
           ...currentState,
           numAlivePlayers,
         }))
-
-        return () => clearTimeout(timeout)
+        return
       }
 
       setLocalGameState((currentState) => ({
@@ -125,6 +120,18 @@ function LiveLeverGame () {
       }))
     }
   }, [gameState, localGameState.numAlivePlayers, numAlivePlayers])
+
+  useEffect(() => {
+    if (!displayBomb) {
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setDisplayBomb(false)
+    }, BOMB_ANIMATION_TIME)
+
+    return () => clearTimeout(timeout)
+  }, [displayBomb])
 
   const joinGameButtonPressed = async () => {
     try {
