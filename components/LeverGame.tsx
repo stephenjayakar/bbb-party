@@ -29,6 +29,16 @@ const LEVER_COLORS = [
   'pink',
   'teal',
   'black',
+  'cyan',
+  'lime',
+  'gold',
+  'silver',
+  'navy',
+  'maroon',
+  'peach',
+  'mint',
+  'lavender',
+  'coral',
 ] as const
 
 interface LocalGameState {

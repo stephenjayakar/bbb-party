@@ -624,6 +624,46 @@
   background: linear-gradient(180deg, #7d7d86 0%, #34343d 58%, #111216 100%);
 }
 
+.leverColorCyan .leverPlunger {
+  background: linear-gradient(180deg, #b8ffff 0%, #42dfe6 58%, #15959d 100%);
+}
+
+.leverColorLime .leverPlunger {
+  background: linear-gradient(180deg, #e3ff97 0%, #9adf2f 58%, #5f970d 100%);
+}
+
+.leverColorGold .leverPlunger {
+  background: linear-gradient(180deg, #fff0a3 0%, #d9ab22 58%, #946705 100%);
+}
+
+.leverColorSilver .leverPlunger {
+  background: linear-gradient(180deg, #f4f7fb 0%, #aeb7c3 58%, #6d7683 100%);
+}
+
+.leverColorNavy .leverPlunger {
+  background: linear-gradient(180deg, #7d9dff 0%, #2d4f9b 58%, #132658 100%);
+}
+
+.leverColorMaroon .leverPlunger {
+  background: linear-gradient(180deg, #d38a97 0%, #8f2d43 58%, #54111f 100%);
+}
+
+.leverColorPeach .leverPlunger {
+  background: linear-gradient(180deg, #ffd9c2 0%, #f4a56b 58%, #c56b34 100%);
+}
+
+.leverColorMint .leverPlunger {
+  background: linear-gradient(180deg, #d7ffe9 0%, #66d4a0 58%, #289262 100%);
+}
+
+.leverColorLavender .leverPlunger {
+  background: linear-gradient(180deg, #ead9ff 0%, #ad7dea 58%, #7141ad 100%);
+}
+
+.leverColorCoral .leverPlunger {
+  background: linear-gradient(180deg, #ffbfaa 0%, #f56f5b 58%, #bd3d2a 100%);
+}
+
 .survived {
   display: inline-block;
   margin: 0.35rem 0;
