@@ -220,6 +220,55 @@
   justify-items: center;
 }
 
+.confettiBurst {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 230px;
+  height: 170px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  width: 10px;
+  height: 18px;
+  border-radius: 3px;
+  opacity: 0;
+  transform: translate(-50%, 0) rotate(0deg);
+  animation: confettiBlast 1.1s cubic-bezier(0.15, 0.75, 0.25, 1) forwards;
+  animation-delay: calc(var(--confetti-index) * 28ms);
+}
+
+.confettiPiece1 {
+  background: #ffdb5c;
+}
+
+.confettiPiece2 {
+  background: #ff6b4a;
+}
+
+.confettiPiece3 {
+  background: #58d68d;
+}
+
+.confettiPiece4 {
+  background: #7dc7ff;
+}
+
+.confettiPiece5 {
+  background: #f58bff;
+}
+
+.confettiPiece6 {
+  background: #fff4cf;
+}
+
 .bombAura {
   position: absolute;
   top: 10px;
@@ -578,6 +627,26 @@
   }
   50% {
     transform: translateY(-8px);
+  }
+}
+
+@keyframes confettiBlast {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px) rotate(0deg) scale(0.7);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(
+        calc(-50% + (var(--confetti-index) - 9) * 14px),
+        calc(-92px - var(--confetti-index) * 4px)
+      )
+      rotate(var(--confetti-rotate))
+      scale(1);
   }
 }
 

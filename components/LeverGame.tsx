@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
@@ -13,6 +14,7 @@ import { Player, Lever, GameState } from '../convex/common'
 const NO_PLAYER = -1
 const NO_GAME_ID = ''
 const BOMB_ANIMATION_TIME = 1500 // ms
+const CONFETTI_ANIMATION_TIME = 1200 // ms
 const LEVER_COLORS = ['red', 'purple', 'yellow', 'green', 'white'] as const
 
 interface LocalGameState {
@@ -28,6 +30,7 @@ interface GameShellProps {
   gameState?: GameState
   localGameState: LocalGameState
   displayBomb: boolean
+  displayConfetti: boolean
   onJoinGame?: () => void
   onRestartGame?: () => void
   onStartGame?: () => void
@@ -80,7 +83,11 @@ function LiveLeverGame () {
   const [localGameState, setLocalGameState] = useState(dummyLocalState)
   const [displayBomb, setDisplayBomb] = useState(false)
   const [bombSequence, setBombSequence] = useState(0)
+  const [displayConfetti, setDisplayConfetti] = useState(false)
+  const [confettiSequence, setConfettiSequence] = useState(0)
   const lastLocalPlayerAlive = useRef<boolean | null>(null)
+  const lastAlivePlayers = useRef<number | null>(null)
+  const lastLeversRemaining = useRef<number | null>(null)
 
   const { playerNumber, gameID } = localGameState
 
@@ -94,6 +101,29 @@ function LiveLeverGame () {
       setLocalGameState(dummyLocalState)
     }
   }, [gameID, gameState, gameStatePresent])
+
+  useEffect(() => {
+    if (!gameState) {
+      lastAlivePlayers.current = null
+      lastLeversRemaining.current = null
+      return
+    }
+
+    const alivePlayers = getNumAlivePlayers(gameState.players)
+    const leversRemaining = gameState.levers.filter((lever) => !lever.flipped).length
+    const leversDropped =
+      lastLeversRemaining.current !== null && leversRemaining < lastLeversRemaining.current
+    const nobodyDied =
+      lastAlivePlayers.current !== null && alivePlayers === lastAlivePlayers.current
+
+    if (gameState.isStarted && leversDropped && nobodyDied) {
+      setDisplayConfetti(true)
+      setConfettiSequence((currentSequence) => currentSequence + 1)
+    }
+
+    lastAlivePlayers.current = alivePlayers
+    lastLeversRemaining.current = leversRemaining
+  }, [gameState])
 
   useEffect(() => {
     if (!gameState || playerNumber === NO_PLAYER || playerNumber >= gameState.players.length) {
@@ -122,6 +152,18 @@ function LiveLeverGame () {
     return () => clearTimeout(timeout)
   }, [bombSequence, displayBomb])
 
+  useEffect(() => {
+    if (!displayConfetti) {
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setDisplayConfetti(false)
+    }, CONFETTI_ANIMATION_TIME)
+
+    return () => clearTimeout(timeout)
+  }, [confettiSequence, displayConfetti])
+
   const joinGameButtonPressed = async () => {
     try {
       const joinGameResponse = await joinGame({ numClientPlayers: numPlayers })
@@ -148,6 +190,7 @@ function LiveLeverGame () {
   const restartGameButtonPressed = () => {
     void restartGame({})
     setDisplayBomb(false)
+    setDisplayConfetti(false)
   }
 
   const flipLeverButtonPressed = (leverNumber: number) => {
@@ -165,6 +208,7 @@ function LiveLeverGame () {
       gameState={gameState}
       localGameState={localGameState}
       displayBomb={displayBomb}
+      displayConfetti={displayConfetti}
       onJoinGame={joinGameButtonPressed}
       onRestartGame={restartGameButtonPressed}
       onStartGame={startGameButtonPressed}
@@ -180,6 +224,7 @@ export function LeverGamePreview ({ preview }: LeverGameProps) {
         gameState={mockMidgameState}
         localGameState={mockMidgameLocalState}
         displayBomb={false}
+        displayConfetti={false}
         previewLabel="mocked mid-game state"
       />
     )
@@ -193,6 +238,7 @@ function GameShell (props: GameShellProps) {
     gameState,
     localGameState,
     displayBomb,
+    displayConfetti,
     onJoinGame,
     onRestartGame,
     onStartGame,
@@ -244,6 +290,7 @@ function GameShell (props: GameShellProps) {
         </div>
         <div className="bombRig">
           <div className="bombAura" />
+          <ConfettiBurst displayConfetti={displayConfetti} />
           <img className="bowserBombArt" src="/bowser-bomb.svg" alt="Bowser bomb" />
           <div className="bombShadow" />
         </div>
@@ -424,6 +471,29 @@ function BombComponent (props: { displayBomb: boolean }) {
         </div>
       )}
     </>
+  )
+}
+
+function ConfettiBurst (props: { displayConfetti: boolean }) {
+  if (!props.displayConfetti) {
+    return null
+  }
+
+  return (
+    <div className="confettiBurst" aria-hidden="true">
+      {Array.from({ length: 18 }).map((_, index) => (
+        <span
+          key={index}
+          className={`confettiPiece confettiPiece${(index % 6) + 1}`}
+          style={
+            {
+              '--confetti-index': index,
+              '--confetti-rotate': `${(index % 2 === 0 ? 1 : -1) * (18 + index * 4)}deg`,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
   )
 }
 
