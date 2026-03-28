@@ -347,8 +347,14 @@ function LiveLeverGame () {
     const leversRemaining = gameState.levers.filter((lever) => !lever.flipped).length
     const leversDropped =
       lastLeversRemaining.current !== null && leversRemaining < lastLeversRemaining.current
+    const somebodyDied =
+      lastAlivePlayers.current !== null && alivePlayers < lastAlivePlayers.current
     const nobodyDied =
       lastAlivePlayers.current !== null && alivePlayers === lastAlivePlayers.current
+
+    if (gameState.isStarted && leversDropped && somebodyDied) {
+      playKaboom(audioContextRef)
+    }
 
     if (gameState.isStarted && leversDropped && nobodyDied) {
       playSafeTick(audioContextRef)
@@ -368,7 +374,6 @@ function LiveLeverGame () {
 
     const localPlayerAlive = gameState.players[playerNumber].alive
     if (lastLocalPlayerAlive.current === true && !localPlayerAlive) {
-      playKaboom(audioContextRef)
       setDisplayBomb(true)
       setBombSequence((currentSequence) => currentSequence + 1)
     }
